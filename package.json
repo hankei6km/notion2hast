@@ -1,0 +1,58 @@
+{
+  "name": "notion2hast",
+  "version": "0.1.0",
+  "description": "Notion blocks to hast",
+  "license": "MIT",
+  "author": "hankei6km <hankei6km@gmail.com> (https://github.com/hankei6km)",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:hankei6km/notion2hast.git"
+  },
+  "bugs": {
+    "url": "https://github.com/hankei6km/notion2hast/issues"
+  },
+  "keywords": [
+    "notion",
+    "hast"
+  ],
+  "main": "dist/index.js",
+  "exports": "./dist/index.js",
+  "type": "module",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": "^14.13.1 || >=16.0.0"
+  },
+  "bin": {
+    "notion2hast": "dist/main.js"
+  },
+  "scripts": {
+    "start": "npm run build && node dist/main.js",
+    "build": "npm run clean && tsc && rimraf dist/test && mv dist/src/* dist/ && rimraf dist/src",
+    "test": "node --experimental-vm-modules node_modules/.bin/jest",
+    "clean": "rimraf \"dist/*\"",
+    "upgrade-interactive": "npm-check --update",
+    "csb:test": "npm test -- --runInBand --watchAll"
+  },
+  "dependencies": {
+    "@notionhq/client": "^1.0.4",
+    "hast-util-classnames": "^2.0.0",
+    "hast-util-to-html": "^8.0.3",
+    "hastscript": "^7.0.2",
+    "sha.js": "^2.4.11",
+    "yargs": "^17.5.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^27.5.1",
+    "@types/node": "^16.11.1",
+    "@types/sha.js": "^2.4.0",
+    "@types/yargs": "^17.0.10",
+    "jest": "^28.1.0",
+    "rimraf": "^3.0.2",
+    "ts-jest": "^28.0.2",
+    "ts-node": "^10.7.0",
+    "typescript": "^4.6.4"
+  }
+}
