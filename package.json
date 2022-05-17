@@ -38,7 +38,6 @@
   },
   "dependencies": {
     "@notionhq/client": "^1.0.4",
-    "chanpuru": "^0.2.0",
     "hast-util-classnames": "^2.0.0",
     "hast-util-to-html": "^8.0.3",
     "hastscript": "^7.0.2",
