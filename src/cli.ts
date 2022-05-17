@@ -40,16 +40,7 @@ export const cli = async ({
     })
     const tree = await blockToHast(client, {
       block_id: blockId,
-      blocktoHastOpts: {
-        defaultClassName,
-        blockToHastBuilderOpts: {
-          propertiesMap: {
-            'heading-2': { style: 'border: solid;' },
-            callout: { className: 'flex' },
-            'callout-paragraph': { className: 'grow' }
-          }
-        }
-      },
+      blocktoHastOpts: { defaultClassName },
       richTexttoHastOpts: { defaultClassName }
     })
     if (toHtml) {
