@@ -42,7 +42,7 @@
     "hast-util-to-html": "^8.0.3",
     "hastscript": "^7.0.2",
     "sha.js": "^2.4.11",
-    "yargs": "^17.5.0"
+    "yargs": "^17.5.1"
   },
   "devDependencies": {
     "@types/jest": "^27.5.1",
