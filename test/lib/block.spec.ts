@@ -171,7 +171,7 @@ describe('BlockToHastBuilder class', () => {
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       })
-    ).toEqual([h('h1', { id: '8b0ef1905b3c' }, ...['test1'])])
+    ).toEqual([h('h1', {}, ...['test1'])])
     expect(
       await b.build({
         block: getMockBlock('heading_1', {
@@ -184,9 +184,7 @@ describe('BlockToHastBuilder class', () => {
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       })
-    ).toEqual([
-      h('h1', { id: '8b0ef1905b3c', style: 'color:#9B9A97' }, ...['test1'])
-    ])
+    ).toEqual([h('h1', { style: 'color:#9B9A97' }, ...['test1'])])
     expect(
       await b.build({
         block: getMockBlock('other', {
@@ -225,11 +223,7 @@ describe('BlockToHastBuilder class', () => {
         colorProps: new ColorProps({})
       })
     ).toEqual([
-      h(
-        'h1',
-        { id: '8b0ef1905b3c', className: 'foo', style: 'color:#9B9A97' },
-        ...['test1']
-      )
+      h('h1', { className: 'foo', style: 'color:#9B9A97' }, ...['test1'])
     ])
   })
 
@@ -250,7 +244,7 @@ describe('BlockToHastBuilder class', () => {
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       })
-    ).toEqual([h('h2', { id: 'a2cc31006112' }, ...['test1'])])
+    ).toEqual([h('h2', {}, ...['test1'])])
     expect(
       await b.build({
         block: getMockBlock('heading_2', {
@@ -263,9 +257,7 @@ describe('BlockToHastBuilder class', () => {
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       })
-    ).toEqual([
-      h('h2', { id: 'a2cc31006112', style: 'color:#9B9A97' }, ...['test1'])
-    ])
+    ).toEqual([h('h2', { style: 'color:#9B9A97' }, ...['test1'])])
     expect(
       await b.build({
         block: getMockBlock('other', {
@@ -304,11 +296,7 @@ describe('BlockToHastBuilder class', () => {
         colorProps: new ColorProps({})
       })
     ).toEqual([
-      h(
-        'h2',
-        { id: 'a2cc31006112', className: 'foo', style: 'color:#9B9A97' },
-        ...['test1']
-      )
+      h('h2', { className: 'foo', style: 'color:#9B9A97' }, ...['test1'])
     ])
   })
 
@@ -329,7 +317,7 @@ describe('BlockToHastBuilder class', () => {
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       })
-    ).toEqual([h('h3', { id: 'df7d2a664da1' }, ...['test1'])])
+    ).toEqual([h('h3', {}, ...['test1'])])
     expect(
       await b.build({
         block: getMockBlock('heading_3', {
@@ -342,9 +330,7 @@ describe('BlockToHastBuilder class', () => {
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       })
-    ).toEqual([
-      h('h3', { id: 'df7d2a664da1', style: 'color:#9B9A97' }, ...['test1'])
-    ])
+    ).toEqual([h('h3', { style: 'color:#9B9A97' }, ...['test1'])])
     expect(
       await b.build({
         block: getMockBlock('other', {
@@ -383,11 +369,7 @@ describe('BlockToHastBuilder class', () => {
         colorProps: new ColorProps({})
       })
     ).toEqual([
-      h(
-        'h3',
-        { id: 'df7d2a664da1', className: 'foo', style: 'color:#9B9A97' },
-        ...['test1']
-      )
+      h('h3', { className: 'foo', style: 'color:#9B9A97' }, ...['test1'])
     ])
   })
 
@@ -1782,9 +1764,7 @@ describe('SurroundElement class', () => {
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
-    expect(surround.content()).toEqual([
-      h('h1', { id: '8b0ef1905b3c' }, ...['test1'])
-    ])
+    expect(surround.content()).toEqual([h('h1', {}, ...['test1'])])
 
     surround.reset()
     await surround.append({
@@ -1798,9 +1778,7 @@ describe('SurroundElement class', () => {
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
-    expect(surround.content()).toEqual([
-      h('h2', { id: 'a2cc31006112' }, ...['test1'])
-    ])
+    expect(surround.content()).toEqual([h('h2', {}, ...['test1'])])
 
     surround.reset()
     await surround.append({
@@ -1814,9 +1792,7 @@ describe('SurroundElement class', () => {
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
-    expect(surround.content()).toEqual([
-      h('h3', { id: 'df7d2a664da1' }, ...['test1'])
-    ])
+    expect(surround.content()).toEqual([h('h3', {}, ...['test1'])])
 
     surround.reset()
     await surround.append({
