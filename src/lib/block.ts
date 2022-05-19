@@ -1,7 +1,6 @@
 import { h } from 'hastscript'
 import { HChild, HProperties } from 'hastscript/lib/core'
 import { classnames } from 'hast-util-classnames'
-import shajs from 'sha.js'
 import {
   Block,
   BlockToHastBuilderOpts,
@@ -65,14 +64,6 @@ export abstract class BlockToHastBuilder<T> {
     this.blockType = blockType
     this.defaultClassname = opts.defaultClassname || false
     this.propertiesMap = { ...(opts.propertiesMap || {}) }
-  }
-  protected id(id: string): string {
-    // このメソッドを外部から差し替える方法は？
-    // static にはしない(opts を利用する可能性もる)
-    return shajs('sha256')
-      .update(id.split('-').join(''))
-      .digest('hex')
-      .slice(0, 12)
   }
   protected props(key: BlockToHastBuilderPropertiesKey): HProperties {
     const ret = { ...(this.propertiesMap[key] || {}) }
@@ -139,13 +130,8 @@ export class BlockHeading1ToHast extends BlockToHastBuilder<'heading_1'> {
         h(
           'h1',
           mergeProps(
-            mergeProps(
-              this.props('heading-1'),
-              colorProps.props(block[block.type].color)
-            ),
-            {
-              id: this.id(block.id)
-            }
+            this.props('heading-1'),
+            colorProps.props(block[block.type].color)
           ),
           ...(await richTextToHast.build(block[block.type].rich_text)),
           ...nest
@@ -177,13 +163,8 @@ export class BlockHeading2ToHast extends BlockToHastBuilder<'heading_2'> {
         h(
           'h2',
           mergeProps(
-            mergeProps(
-              this.props('heading-2'),
-              colorProps.props(block[block.type].color)
-            ),
-            {
-              id: this.id(block.id)
-            }
+            this.props('heading-2'),
+            colorProps.props(block[block.type].color)
           ),
           ...(await richTextToHast.build(block[block.type].rich_text)),
           ...nest
@@ -215,13 +196,8 @@ export class BlockHeading3ToHast extends BlockToHastBuilder<'heading_3'> {
         h(
           'h3',
           mergeProps(
-            mergeProps(
-              this.props('heading-3'),
-              colorProps.props(block[block.type].color)
-            ),
-            {
-              id: this.id(block.id)
-            }
+            this.props('heading-3'),
+            colorProps.props(block[block.type].color)
           ),
           ...(await richTextToHast.build(block[block.type].rich_text)),
           ...nest

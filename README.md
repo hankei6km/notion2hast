@@ -56,12 +56,12 @@ console.log(`${hastToHtml(tree)}`)
 
 ```html
 <p>最初のパラグラフ。</p>
-<h2 id="eb04b125e84f">文字装飾</h2>
+<h2>文字装飾</h2>
 <p><strong>太字</strong></p>
 <p><em>italic</em></p>
 <p><s>打消し線</s></p>
 <p><code>code</code></p>
-<h2 id="00ae5a1c1758">リスト</h2>
+<h2>リスト</h2>
 <ul>
   <li>項目1</li>
   <li>
@@ -93,7 +93,7 @@ const client = new FromNotion({
 
 ```html
 <p class="paragraph">最初のパラグラフ。</p>
-<h2 class="heading-2" id="eb04b125e84f">文字装飾</h2>
+<h2 class="heading-2">文字装飾</h2>
 <p class="paragraph"><strong class="text-bold">太字</strong></p>
 <p class="paragraph"><em class="text-italic">italic</em></p>
 <p class="paragraph"><s class="text-strikethrough">打消し線</s></p>
@@ -122,7 +122,7 @@ const client = new FromNotion({
 ```
 
 ```html
-<h2 style="border: solid" class="heading-2" id="9c37647f5e13">コールアウト</h2>
+<h2 style="border: solid" class="heading-2">コールアウト</h2>
 <div class="flex" style="background-color: #ebeced">
   <div class="callout-icon-emoji">💡</div>
   <div class="grow">
