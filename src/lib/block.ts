@@ -14,6 +14,7 @@ import { RichTextToHast } from './richtext.js'
 import { Client } from './client.js'
 import { ColorProps } from './color.js'
 import { mergeProps } from './props.js'
+import { ListBlockChildrenResponse } from '@notionhq/client/build/src/api-endpoints'
 
 export function isBlock(o: any): o is Block {
   if (o.object === 'block' && typeof o.type === 'string') {
@@ -22,29 +23,54 @@ export function isBlock(o: any): o is Block {
   return false
 }
 
-export async function* blockItem(
-  client: Client,
-  opts: ToHastOpts
-  //): AsyncGenerator<ListBlockChildrenResponse['results'][0]> {
-): AsyncGenerator<Block> {
-  let res = await client.listBlockChildren({
-    block_id: opts.block_id
-  })
-  let blocks = res.results
-  while (blocks.length > 0) {
-    for (const item of blocks) {
-      if (isBlock(item)) {
-        yield item
+export class BlockItem {
+  private client: Client
+  private opts: ToHastOpts
+  private blocks: ListBlockChildrenResponse['results']
+  private next_cursor: ListBlockChildrenResponse['next_cursor']
+  private blocksLen: number
+  private idx: number
+  constructor(client: Client, opts: ToHastOpts) {
+    this.client = client
+    this.opts = opts
+    this.blocks = []
+    this.next_cursor = null
+    this.blocksLen = 0
+    this.idx = 0
+  }
+  async init(): Promise<void> {
+    let res = await this.client.listBlockChildren({
+      block_id: this.opts.block_id
+    })
+    this.blocks = res.results || []
+    this.next_cursor = res.next_cursor
+    this.blocksLen = this.blocks.length
+    this.idx = 0
+  }
+  async block(): Promise<Block | null> {
+    if (this.idx >= this.blocksLen) {
+      if (this.next_cursor) {
+        let res = await this.client.listBlockChildren({
+          block_id: this.opts.block_id,
+          start_cursor: this.next_cursor || undefined
+        })
+        this.blocks = res.results || []
+        this.next_cursor = res.next_cursor
+        this.blocksLen = this.blocks.length
+        this.idx = 0
+      } else {
+        return null
       }
     }
-    blocks = []
-    if (res.next_cursor) {
-      res = await client.listBlockChildren({
-        block_id: opts.block_id,
-        start_cursor: res.next_cursor
-      })
-      blocks = res.results
+    if (this.blocksLen === 0) {
+      return null
     }
+    const ret = this.blocks[this.idx]
+    this.idx++
+    if (isBlock(ret)) {
+      return ret
+    }
+    return null
   }
 }
 
