@@ -10,7 +10,7 @@ import {
   BlockHeading2ToHast,
   BlockHeading3ToHast,
   BlockImageToHast,
-  blockItem,
+  BlockItem,
   BlockNumberedListItemToHast,
   BlockParagraphToHast,
   BlockQuoteToHast,
@@ -47,17 +47,16 @@ describe('isBlock()', () => {
   })
 })
 
-describe('blockItem()', () => {
-  it('should call list api', async () => {
+describe('BlockItem class', () => {
+  it('should call list api in init()', async () => {
     const mockList = jest.fn<(a: any[]) => any>().mockResolvedValue({
       results: []
     })
     const client = { listBlockChildren: mockList }
-    const gen = blockItem(client as any, { block_id: 'test-id-1' })
-    const i = await gen.next()
+    const i = new BlockItem(client as any, { block_id: 'test-id-1' })
+    await i.init()
     expect(mockList).toBeCalledTimes(1)
     expect(mockList).toBeCalledWith({ block_id: 'test-id-1' })
-    expect(i.done).toBeTruthy()
   })
   it('should iterate block item', async () => {
     const mockBlocks = [
@@ -68,15 +67,47 @@ describe('blockItem()', () => {
       results: mockBlocks
     })
     const client = { listBlockChildren: mockList }
-    const gen = blockItem(client as any, { block_id: 'test-id-1' })
-    let i = await gen.next()
-    expect(i.done).toBeFalsy()
-    expect(i.value).toEqual(mockBlocks[0])
-    i = await gen.next()
-    expect(i.done).toBeFalsy()
-    expect(i.value).toEqual(mockBlocks[1])
-    i = await gen.next()
-    expect(i.done).toBeTruthy()
+    const i = new BlockItem(client as any, { block_id: 'test-id-1' })
+    await i.init()
+    expect(await i.block()).toEqual(mockBlocks[0])
+    expect(await i.block()).toEqual(mockBlocks[1])
+    expect(await i.block()).toBeNull()
+  })
+  it('should use next_cursor', async () => {
+    const mockBlocks1 = [
+      { object: 'block', type: 'heading_1' },
+      { object: 'block', type: 'paragraph' }
+    ]
+    const mockBlocks2 = [
+      { object: 'block', type: 'heading_2' },
+      { object: 'block', type: 'code' }
+    ]
+    const mockList = jest
+      .fn<(a: any[]) => any>()
+      .mockResolvedValueOnce({
+        next_cursor: 'cursor1',
+        results: mockBlocks1
+      })
+      .mockResolvedValueOnce({
+        next_cursor: null,
+        results: mockBlocks2
+      })
+
+    const client = { listBlockChildren: mockList }
+    const i = new BlockItem(client as any, { block_id: 'test-id-1' })
+    await i.init()
+    expect(await i.block()).toEqual(mockBlocks1[0])
+    expect(await i.block()).toEqual(mockBlocks1[1])
+    expect(await i.block()).toEqual(mockBlocks2[0])
+    expect(await i.block()).toEqual(mockBlocks2[1])
+    expect(await i.block()).toBeNull()
+
+    expect(mockList).toBeCalledTimes(2)
+    expect(mockList).toBeCalledWith({ block_id: 'test-id-1' })
+    expect(mockList).toBeCalledWith({
+      block_id: 'test-id-1',
+      start_cursor: 'cursor1'
+    })
   })
 })
 
