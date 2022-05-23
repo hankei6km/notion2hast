@@ -356,6 +356,50 @@ export class BlockDividerToHast extends BlockToHastBuilder<'divider'> {
   }
 }
 
+export class BlockColumnListToHast extends BlockToHastBuilder<'column_list'> {
+  constructor(opts: BlockToHastBuilderOpts = {}) {
+    super('column_list', opts)
+  }
+  outerTag(): { name: string | null; properties?: HProperties } {
+    return { name: null }
+  }
+  async build({
+    block,
+    nest,
+    richTextToHast
+  }: BlockToHastBuilderBuildOpts): Promise<HChild[]> {
+    if (this.blockType === block.type) {
+      return [h('div', this.props('column-list'), ...nest)]
+    }
+    return []
+  }
+  isBreak(_prevType: PrevType): boolean {
+    return true
+  }
+}
+
+export class BlockColumnToHast extends BlockToHastBuilder<'column'> {
+  constructor(opts: BlockToHastBuilderOpts = {}) {
+    super('column', opts)
+  }
+  outerTag(): { name: string | null; properties?: HProperties } {
+    return { name: null }
+  }
+  async build({
+    block,
+    nest,
+    richTextToHast
+  }: BlockToHastBuilderBuildOpts): Promise<HChild[]> {
+    if (this.blockType === block.type) {
+      return [h('div', this.props('column'), ...nest)]
+    }
+    return []
+  }
+  isBreak(_prevType: PrevType): boolean {
+    return true
+  }
+}
+
 export class BlockBulletedListItemToHast extends BlockToHastBuilder<'bulleted_list_item'> {
   constructor(opts: BlockToHastBuilderOpts = {}) {
     super('bulleted_list_item', opts)
@@ -716,6 +760,8 @@ export class SurroundElement {
       code: new BlockCodeToHast(opts),
       callout: new BlockCalloutToHast(opts),
       divider: new BlockDividerToHast(opts),
+      column_list: new BlockColumnListToHast(opts),
+      column: new BlockColumnToHast(opts),
       bulleted_list_item: new BlockBulletedListItemToHast(opts),
       numbered_list_item: new BlockNumberedListItemToHast(opts),
       quote: new BlockQuoteToHast(opts),

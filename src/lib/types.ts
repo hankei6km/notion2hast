@@ -30,6 +30,8 @@ export type BlockToHastBuilderPropertiesKey =
   | `callout-icon-image`
   | `callout-paragraph`
   | `divider`
+  | `column-list`
+  | `column`
   | `bulleted-list`
   | `bulleted-list-item`
   | `numbered-list`
