@@ -5,6 +5,8 @@ import {
   BlockBulletedListItemToHast,
   BlockCalloutToHast,
   BlockCodeToHast,
+  BlockColumnListToHast,
+  BlockColumnToHast,
   BlockDividerToHast,
   BlockHeading1ToHast,
   BlockHeading2ToHast,
@@ -744,6 +746,106 @@ describe('BlockToHastBuilder class', () => {
         colorProps: new ColorProps({})
       })
     ).toEqual([h('hr', { className: 'foo' })])
+  })
+
+  it('should build hast as BlockColumnListToHast', async () => {
+    const b = new BlockColumnListToHast()
+
+    expect(b.outerTag()).toEqual({ name: null })
+
+    expect(
+      await b.build({
+        block: getMockBlock('column_list', {}),
+        nest: ['col1', 'col2'],
+        parent: undefined,
+        index: 0,
+        richTextToHast: new RichTextToHast(),
+        colorProps: new ColorProps({})
+      })
+    ).toEqual([h('div', {}, ...['col1', 'col2'])])
+    expect(
+      await b.build({
+        block: getMockBlock('other', {}),
+        nest: ['col1', 'col2'],
+        parent: undefined,
+        index: 0,
+        richTextToHast: new RichTextToHast(),
+        colorProps: new ColorProps({})
+      })
+    ).toEqual([])
+
+    expect(b.isBreak('')).toBeTruthy()
+    expect(b.isBreak('column_list')).toBeTruthy()
+    expect(b.isBreak('other' as any)).toBeTruthy()
+  })
+
+  it('should build hast as BlockColumnListToHast(props)', async () => {
+    const b = new BlockColumnListToHast({
+      propertiesMap: { 'column-list': { className: 'foo' } }
+    })
+
+    expect(b.outerTag()).toEqual({ name: null })
+
+    expect(
+      await b.build({
+        block: getMockBlock('column_list', {}),
+        nest: ['col1', 'col2'],
+        parent: undefined,
+        index: 0,
+        richTextToHast: new RichTextToHast(),
+        colorProps: new ColorProps({})
+      })
+    ).toEqual([h('div', { className: 'foo' }, ...['col1', 'col2'])])
+  })
+
+  it('should build hast as BlockColumnToHast', async () => {
+    const b = new BlockColumnToHast()
+
+    expect(b.outerTag()).toEqual({ name: null })
+
+    expect(
+      await b.build({
+        block: getMockBlock('column', {}),
+        nest: ['test1'],
+        parent: undefined,
+        index: 0,
+        richTextToHast: new RichTextToHast(),
+        colorProps: new ColorProps({})
+      })
+    ).toEqual([h('div', {}, ...['test1'])])
+    expect(
+      await b.build({
+        block: getMockBlock('other', {}),
+        nest: ['test1'],
+        parent: undefined,
+        index: 0,
+        richTextToHast: new RichTextToHast(),
+        colorProps: new ColorProps({})
+      })
+    ).toEqual([])
+
+    expect(b.isBreak('')).toBeTruthy()
+    expect(b.isBreak('column')).toBeTruthy()
+    expect(b.isBreak('other' as any)).toBeTruthy()
+  })
+
+  it('should build hast as BlockColumnToHast(props)', async () => {
+    const b = new BlockColumnToHast({
+      propertiesMap: { column: { className: 'foo' } }
+    })
+
+    expect(b.outerTag()).toEqual({ name: null })
+
+    expect(
+      await b.build({
+        block: getMockBlock('column', {}),
+        nest: ['test1'],
+        parent: undefined,
+        index: 0,
+        richTextToHast: new RichTextToHast(),
+        colorProps: new ColorProps({})
+      })
+    ).toEqual([h('div', { className: 'foo' }, ...['test1'])])
   })
 
   it('should build hast as BlockBulletedListItemToHast', async () => {
@@ -1884,6 +1986,28 @@ describe('SurroundElement class', () => {
 
     surround.reset()
     await surround.append({
+      block: getMockBlock('column_list', {}),
+      nest: ['col1', 'col2'],
+      parent: undefined,
+      index: 0,
+      richTextToHast: new RichTextToHast(),
+      colorProps: new ColorProps({})
+    })
+    expect(surround.content()).toEqual([h('div', {}, ...['col1', 'col2'])])
+
+    surround.reset()
+    await surround.append({
+      block: getMockBlock('column', {}),
+      nest: ['test1'],
+      parent: undefined,
+      index: 0,
+      richTextToHast: new RichTextToHast(),
+      colorProps: new ColorProps({})
+    })
+    expect(surround.content()).toEqual([h('div', {}, ...['test1'])])
+
+    surround.reset()
+    await surround.append({
       block: getMockBlock('bulleted_list_item', {
         rich_text: [getMockRichTextItem('test1')]
       }),
@@ -2081,6 +2205,26 @@ describe('SurroundElement class', () => {
     await surround.append({
       block: getMockBlock('divider'),
       nest: [],
+      parent: undefined,
+      index: 0,
+      richTextToHast: new RichTextToHast(),
+      colorProps: new ColorProps({})
+    })
+    expect(surround.outerTag()).toEqual({ name: null })
+    surround.reset()
+    await surround.append({
+      block: getMockBlock('column_list', {}),
+      nest: ['col1', 'col2'],
+      parent: undefined,
+      index: 0,
+      richTextToHast: new RichTextToHast(),
+      colorProps: new ColorProps({})
+    })
+    expect(surround.outerTag()).toEqual({ name: null })
+    surround.reset()
+    await surround.append({
+      block: getMockBlock('column', {}),
+      nest: ['test1'],
       parent: undefined,
       index: 0,
       richTextToHast: new RichTextToHast(),
@@ -2305,6 +2449,27 @@ describe('SurroundElement class', () => {
     expect(surround.isBreak('toggle')).toBeTruthy()
 
     surround.reset()
+    await surround.append({
+      block: getMockBlock('column_list', {}),
+      nest: ['col1', 'col2'],
+      parent: undefined,
+      index: 0,
+      richTextToHast: new RichTextToHast(),
+      colorProps: new ColorProps({})
+    })
+    expect(surround.isBreak('column_list')).toBeTruthy()
+
+    surround.reset()
+    await surround.append({
+      block: getMockBlock('column', {}),
+      nest: ['test1'],
+      parent: undefined,
+      index: 0,
+      richTextToHast: new RichTextToHast(),
+      colorProps: new ColorProps({})
+    })
+    expect(surround.isBreak('column_list')).toBeTruthy()
+
     surround.reset()
     await surround.append({
       block: getMockBlock('table'),

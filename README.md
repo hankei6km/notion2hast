@@ -154,8 +154,8 @@ const client = new FromNotion({
 - [x] divider
 - [ ] breadcrumb
 - [ ] table_of_contents
-- [ ] column_list
-- [ ] column
+- [x] column_list
+- [x] column
 - [ ] link_to_page
 - [x] table
 - [x] table_row
@@ -224,6 +224,8 @@ const client = new FromNotion({
 - `callout-icon-image`
 - `callout-paragraph`
 - `divider`
+- `column-list`
+- `column`
 - `bulleted-list`
 - `bulleted-list-item`
 - `numbered-list`
