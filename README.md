@@ -79,6 +79,102 @@ console.log(`${hastToHtml(tree)}`)
 </ul>
 ```
 
+### Custom Client
+
+Notions の Client(主に fetch 関連)が利用できない環境では Custom Client を利用可能。
+
+以下、Google Apps Script(clasp) で利用する場合の例。
+
+`tohast.ts`
+
+```typescript
+import { Client as NotionClient } from '@notionhq/client'
+import { ClientOptions } from '@notionhq/client/build/src/Client'
+import { toHtml as hastToHtml } from 'hast-util-to-html'
+import { blockToHast } from '@hankei6km/notion2hast'
+import { Client } from '@hankei6km/notion2hast'
+import { listBlockChildren } from './notion'
+
+export namespace NotionToHast {
+  class FromNotion extends Client {
+    //private client: NotionClient;
+    private auth: ClientOptions['auth']
+    constructor(options?: ClientOptions) {
+      super()
+      this.auth = options?.auth
+    }
+    async listBlockChildren(
+      ...args: Parameters<NotionClient['blocks']['children']['list']>
+    ): Promise<ReturnType<NotionClient['blocks']['children']['list']>> {
+      return listBlockChildren(this.auth || '', args[0].block_id) as any
+    }
+  }
+
+  export async function toHast(apiKey: string, block_id: string) {
+    const client = new FromNotion({ auth: apiKey })
+    const tree = await blockToHast(client, {
+      block_id,
+      blocktoHastOpts: { defaultClassName: true },
+      richTexttoHastOpts: { defaultClassName: true }
+    })
+    console.log(`${hastToHtml(tree)}`)
+  }
+}
+```
+
+`notion.ts`
+
+```typescript
+import {
+  CreatePageParameters,
+  UpdatePageParameters,
+  QueryDatabaseParameters,
+  QueryDatabaseResponse
+} from '@notionhq/client/build/src/api-endpoints'
+
+const apiIUrlCreatePage = 'https://api.notion.com/v1/pages'
+const apiUrlDabtabaseQuery = (database_id: string) =>
+  `https://api.notion.com/v1/databases/${database_id}/query`
+const apiUrlUpdatePage = (page_id: string) =>
+  `https://api.notion.com/v1/pages/${page_id}`
+const apiUrListBlockChildren = (block_id: string) =>
+  `https://api.notion.com/v1/blocks/${block_id}/children`
+const apiVersion = '2022-02-22'
+
+export function isErrRes(
+  res: GoogleAppsScript.URL_Fetch.HTTPResponse
+): boolean {
+  const code = Math.trunc(res.getResponseCode() / 100)
+  if (code === 4 || code === 5) {
+    return true
+  }
+  return false
+}
+
+export function listBlockChildren(apiKey: string, block_id: string) {
+  const url = apiUrListBlockChildren(block_id)
+  try {
+    const res = UrlFetchApp.fetch(url, {
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+        'Notion-Version': apiVersion
+      },
+      muteHttpExceptions: true
+    })
+    const code = res.getResponseCode()
+    if (isErrRes(res)) {
+      throw res.getContentText()
+    }
+    const resQuery = JSON.parse(res.getContentText()) as QueryDatabaseResponse
+    return resQuery
+  } catch (e) {
+    console.log(`${e}`)
+    throw e
+  }
+}
+```
+
 ### default class name
 
 各要素にデフォルトの class 名を追加。デフォルトのクラス名は properties map の key が使用される。
