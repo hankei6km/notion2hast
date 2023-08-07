@@ -1,5 +1,5 @@
 import { h } from 'hastscript'
-import { HChild, HProperties } from 'hastscript/lib/core'
+import type { Child, Properties } from 'hastscript'
 import { ColorProps } from './color.js'
 import { mergeProps } from './props.js'
 import {
@@ -31,7 +31,7 @@ export class RichTextToHast {
       opts.richTexttoHastBuilderOpts?.richTexttoHastBuildePropertiesMap || {}
     )
   }
-  protected props(key: string): HProperties {
+  protected props(key: string): Properties {
     const ret = { ...(this.propertiesMap[key] || {}) }
     if (this.defaultClassName) {
       if (typeof ret.className === 'undefined') {
@@ -40,8 +40,8 @@ export class RichTextToHast {
     }
     return ret
   }
-  textToHast(text: RichTextTextItem): HChild {
-    let tag: { name: string; properties: HProperties }[] = []
+  textToHast(text: RichTextTextItem): Child {
+    let tag: { name: string; properties: Properties }[] = []
     const value = text.plain_text
     if (text.href) {
       tag.push({
@@ -95,8 +95,8 @@ export class RichTextToHast {
     }
     return nest
   }
-  async build(richTextItems: RichTextItem[]): Promise<HChild[]> {
-    const ret: HChild[] = []
+  async build(richTextItems: RichTextItem[]): Promise<Child[]> {
+    const ret: Child[] = []
     for (const item of richTextItems) {
       if (item.type === 'text') {
         ret.push(this.textToHast(item))

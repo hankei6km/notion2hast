@@ -44,7 +44,14 @@ export const cli = async ({
       richTexttoHastOpts: { defaultClassName }
     })
     if (toHtml) {
-      stdout.write(`${hastToHtml(tree)}\n`)
+      if (
+        tree !== undefined &&
+        tree !== null &&
+        typeof tree === 'object' &&
+        !Array.isArray(tree)
+      ) {
+        stdout.write(`${hastToHtml(tree)}\n`)
+      }
     } else {
       stdout.write(`${JSON.stringify(tree, null, '  ')}\n`)
     }
