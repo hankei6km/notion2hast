@@ -1,12 +1,12 @@
 import { classnames } from 'hast-util-classnames'
 import { h } from 'hastscript'
-import { HProperties } from 'hastscript/lib/core'
+import type { Properties } from 'hastscript'
 
 export function mergeProps(
-  p: HProperties,
-  { className, style, ...others }: HProperties
-): HProperties {
-  const ret: HProperties = { ...p }
+  p: Properties,
+  { className, style, ...others }: Properties
+): Properties {
+  const ret: Properties = { ...p }
 
   // className(class) をマージ.
   Object.assign(ret, others)

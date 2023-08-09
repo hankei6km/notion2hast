@@ -1,5 +1,5 @@
 import { Client } from '@notionhq/client'
-import { HChild, HProperties } from 'hastscript/lib/core'
+import type { Child, Properties } from 'hastscript'
 import { BlockToHastBuilder } from './block'
 
 export type ToHastOpts = {
@@ -65,10 +65,10 @@ export type BlockToHastBuilderPropertiesKey =
 
 // export type BlockToHastBuilderPropertiesMap = Record<
 //   BlockToHastBuilderPropertiesKey ,
-//   HProperties
+//   Properties
 // >
 export type BlockToHastBuilderPropertiesMap = {
-  [key in BlockToHastBuilderPropertiesKey]?: HProperties
+  [key in BlockToHastBuilderPropertiesKey]?: Properties
 }
 export type BlockToHastBuilderOpts = {
   defaultClassname?: boolean
@@ -90,11 +90,11 @@ export type BlockToHastOpts = {
   blockToHastBuilders?: BlockToHastBuilders
 }
 
-export type ColorPropertiesMap = Record<string, HProperties>
+export type ColorPropertiesMap = Record<string, Properties>
 export type ColorPropsOpts = {
   colorPropertiesMap?: ColorPropertiesMap
 }
-export type RichTexttoHastBuildePropertiesMap = Record<string, HProperties>
+export type RichTexttoHastBuildePropertiesMap = Record<string, Properties>
 export type RichTexttoHastBuilderOpts = {
   richTexttoHastBuildePropertiesMap?: RichTexttoHastBuildePropertiesMap
 }

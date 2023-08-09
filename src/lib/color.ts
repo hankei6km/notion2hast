@@ -1,4 +1,4 @@
-import { HProperties } from 'hastscript/lib/core'
+import type { Properties } from 'hastscript'
 import { ColorPropertiesMap, ColorPropsOpts } from './types'
 
 // https://optemization.com/notion-color-guide
@@ -35,7 +35,7 @@ export class ColorProps {
       opts.colorPropertiesMap || {}
     )
   }
-  props(color: string): HProperties {
+  props(color: string): Properties {
     return { ...(this.colorPropertiesMap[color] || {}) }
   }
 }

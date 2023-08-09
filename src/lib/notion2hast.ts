@@ -1,5 +1,5 @@
 import { h } from 'hastscript'
-import { HChild, Node, Root } from 'hastscript/lib/core'
+import type { Child } from 'hastscript'
 import { ToHastOpts } from './types.js'
 import { Client } from './client.js'
 import { BlockItem, SurroundElement } from './block.js'
@@ -10,7 +10,7 @@ export async function blockToHast(
   client: Client,
   opts: ToHastOpts,
   depth: number = 0
-): Promise<Node> {
+): Promise<Child> {
   const colorProps = new ColorProps({
     ...opts.colorPropsOpts
   })
@@ -18,7 +18,7 @@ export async function blockToHast(
     opts.richTexttoHastOpts || {},
     colorProps
   )
-  const children: HChild = []
+  const children: Child = []
   //const ite = blockItem(client, opts)
   const ite = new BlockItem(client, opts)
   await ite.init()
@@ -27,7 +27,7 @@ export async function blockToHast(
   const surround = new SurroundElement('', opts.blocktoHastOpts || {})
   while (i !== null) {
     while (i !== null && !surround.isBreak(i.type)) {
-      const nest: HChild = []
+      const nest: Child = []
       if (i.has_children) {
         const a = await blockToHast(
           client,
@@ -35,7 +35,11 @@ export async function blockToHast(
           depth + 1
         )
         // surround.nest(a)
-        nest.push(a)
+        if (Array.isArray(a)) {
+          nest.push(...a)
+        } else {
+          nest.push(a)
+        }
       }
       await surround.append({
         block: i,
@@ -59,5 +63,5 @@ export async function blockToHast(
   if (depth === 0) {
     return h(null, ...children)
   }
-  return children as any
+  return children
 }
