@@ -41,7 +41,7 @@
     "hash.js": "^1.1.7",
     "hast-util-classnames": "^3.0.0",
     "hast-util-to-html": "^9.0.0",
-    "hastscript": "^8.0.0",
+    "hastscript": "^9.0.0",
     "sha.js": "^2.4.11",
     "yargs": "^17.5.1"
   },
