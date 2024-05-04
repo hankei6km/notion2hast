@@ -11,9 +11,9 @@ class CliClient extends Client {
     super()
     this.client = new NotionClient(options)
   }
-  async listBlockChildren(
+  listBlockChildren(
     ...args: Parameters<NotionClient['blocks']['children']['list']>
-  ): Promise<ReturnType<NotionClient['blocks']['children']['list']>> {
+  ): ReturnType<NotionClient['blocks']['children']['list']> {
     return this.client.blocks.children.list(...args)
   }
 }
