@@ -85,14 +85,14 @@ describe('cli()', () => {
         stderr
       })
     ).toEqual(0)
-    expect(mockClient).toBeCalledWith({ auth: 'test-api-key-1' })
-    expect(mockBlockToHast).toBeCalledTimes(1)
+    expect(mockClient).toHaveBeenCalledWith({ auth: 'test-api-key-1' })
+    expect(mockBlockToHast).toHaveBeenCalledTimes(1)
     expect(mockBlockToHast.mock.calls[0][1]).toEqual({
       block_id: 'test-block-id-1',
       blocktoHastOpts: { defaultClassName: undefined },
       richTexttoHastOpts: { defaultClassName: undefined }
     })
-    expect(mockToHtml).toBeCalledTimes(0)
+    expect(mockToHtml).toHaveBeenCalledTimes(0)
     expect(outData).toEqual(`{
   "id": "test-1"
 }
@@ -116,14 +116,14 @@ describe('cli()', () => {
         stderr
       })
     ).toEqual(0)
-    expect(mockClient).toBeCalledWith({ auth: 'test-api-key-1' })
-    expect(mockBlockToHast).toBeCalledTimes(1)
+    expect(mockClient).toHaveBeenCalledWith({ auth: 'test-api-key-1' })
+    expect(mockBlockToHast).toHaveBeenCalledTimes(1)
     expect(mockBlockToHast.mock.calls[0][1]).toEqual({
       block_id: 'test-block-id-1',
       blocktoHastOpts: { defaultClassName: true },
       richTexttoHastOpts: { defaultClassName: true }
     })
-    expect(mockToHtml).toBeCalledTimes(0)
+    expect(mockToHtml).toHaveBeenCalledTimes(0)
     expect(outData).toEqual(`{
   "id": "test-1"
 }
@@ -147,15 +147,15 @@ describe('cli()', () => {
         stderr
       })
     ).toEqual(0)
-    expect(mockClient).toBeCalledWith({ auth: 'test-api-key-1' })
-    expect(mockBlockToHast).toBeCalledTimes(1)
+    expect(mockClient).toHaveBeenCalledWith({ auth: 'test-api-key-1' })
+    expect(mockBlockToHast).toHaveBeenCalledTimes(1)
     expect(mockBlockToHast.mock.calls[0][1]).toEqual({
       block_id: 'test-block-id-1',
       blocktoHastOpts: { defaultClassName: undefined },
       richTexttoHastOpts: { defaultClassName: undefined }
     })
-    expect(mockToHtml).toBeCalledTimes(1)
-    expect(mockToHtml).toBeCalledWith({
+    expect(mockToHtml).toHaveBeenCalledTimes(1)
+    expect(mockToHtml).toHaveBeenCalledWith({
       id: 'test-1'
     })
     expect(outData).toEqual('test-html-1\n')
