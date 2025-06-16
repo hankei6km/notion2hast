@@ -57,8 +57,8 @@ describe('BlockItem class', () => {
     const client = { listBlockChildren: mockList }
     const i = new BlockItem(client as any, { block_id: 'test-id-1' })
     await i.init()
-    expect(mockList).toBeCalledTimes(1)
-    expect(mockList).toBeCalledWith({ block_id: 'test-id-1' })
+    expect(mockList).toHaveBeenCalledTimes(1)
+    expect(mockList).toHaveBeenCalledWith({ block_id: 'test-id-1' })
   })
   it('should iterate block item', async () => {
     const mockBlocks = [
@@ -104,9 +104,9 @@ describe('BlockItem class', () => {
     expect(await i.block()).toEqual(mockBlocks2[1])
     expect(await i.block()).toBeNull()
 
-    expect(mockList).toBeCalledTimes(2)
-    expect(mockList).toBeCalledWith({ block_id: 'test-id-1' })
-    expect(mockList).toBeCalledWith({
+    expect(mockList).toHaveBeenCalledTimes(2)
+    expect(mockList).toHaveBeenCalledWith({ block_id: 'test-id-1' })
+    expect(mockList).toHaveBeenCalledWith({
       block_id: 'test-id-1',
       start_cursor: 'cursor1'
     })
