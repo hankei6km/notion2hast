@@ -37,7 +37,7 @@
     "csb:test": "npm test -- --runInBand --watchAll"
   },
   "dependencies": {
-    "@notionhq/client": "^3.0.1",
+    "@notionhq/client": "^4.0.0",
     "hash.js": "^1.1.7",
     "hast-util-classnames": "^3.0.0",
     "hast-util-to-html": "^9.0.0",
