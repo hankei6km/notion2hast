@@ -1,6 +1,6 @@
 {
   "name": "notion2hast",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Notion blocks to hast",
   "license": "MIT",
   "author": "hankei6km <hankei6km@gmail.com> (https://github.com/hankei6km)",
