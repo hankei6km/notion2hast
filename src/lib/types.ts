@@ -1,6 +1,6 @@
 import { Client } from '@notionhq/client'
 import type { Child, Properties } from 'hastscript'
-import { BlockToHastBuilder } from './block'
+import { BlockToHastBuilder } from './block.ts'
 
 export type ToHastOpts = {
   block_id: string

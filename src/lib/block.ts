@@ -1,7 +1,7 @@
 import { h } from 'hastscript'
 import type { Child, Properties } from 'hastscript'
 import { classnames } from 'hast-util-classnames'
-import {
+import type {
   Block,
   BlockToHastBuilderOpts,
   BlockToHastBuilderPropertiesKey,
@@ -9,12 +9,12 @@ import {
   BlockToHastBuilders,
   BlockToHastOpts,
   ToHastOpts
-} from './types.js'
-import { RichTextToHast } from './richtext.js'
-import { Client } from './client.js'
-import { ColorProps } from './color.js'
-import { mergeProps } from './props.js'
-import { ListBlockChildrenResponse } from '@notionhq/client/build/src/api-endpoints'
+} from './types.ts'
+import { RichTextToHast } from './richtext.ts'
+import { Client } from './client.ts'
+import { ColorProps } from './color.ts'
+import { mergeProps } from './props.ts'
+import type { ListBlockChildrenResponse } from '@notionhq/client'
 
 export function isBlock(o: any): o is Block {
   if (o.object === 'block' && typeof o.type === 'string') {

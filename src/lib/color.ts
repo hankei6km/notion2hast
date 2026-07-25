@@ -1,5 +1,5 @@
 import type { Properties } from 'hastscript'
-import { ColorPropertiesMap, ColorPropsOpts } from './types'
+import type { ColorPropertiesMap, ColorPropsOpts } from './types.ts'
 
 // https://optemization.com/notion-color-guide
 const colorPropertiesMap: ColorPropertiesMap = {

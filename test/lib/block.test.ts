@@ -1,4 +1,5 @@
-import { jest } from '@jest/globals'
+import { describe, it } from 'node:test'
+import assert from 'node:assert/strict'
 import { h } from 'hastscript'
 import {
   BlockBookmarkToHast,
@@ -22,10 +23,10 @@ import {
   BlockToggleToHast,
   isBlock,
   SurroundElement
-} from '../../src/lib/block.js'
-import { ColorProps } from '../../src/lib/color.js'
-import { RichTextToHast } from '../../src/lib/richtext.js'
-import { getMockRichTextItem } from '../util.js'
+} from '../../src/lib/block.ts'
+import { ColorProps } from '../../src/lib/color.ts'
+import { RichTextToHast } from '../../src/lib/richtext.ts'
+import { getMockRichTextItem } from '../util.ts'
 
 const getMockBlock = (
   type: string,
@@ -41,41 +42,43 @@ const getMockBlock = (
 
 describe('isBlock()', () => {
   it('should retun true', () => {
-    expect(isBlock({ object: 'block', type: 'paragraph' })).toBeTruthy()
+    assert.strictEqual(isBlock({ object: 'block', type: 'paragraph' }), true)
   })
   it('should retun false', () => {
-    expect(isBlock({ object: '', type: 'paragraph' })).toBeFalsy()
-    expect(isBlock({ object: 'block' })).toBeFalsy()
+    assert.strictEqual(isBlock({ object: '', type: 'paragraph' }), false)
+    assert.strictEqual(isBlock({ object: 'block' }), false)
   })
 })
 
 describe('BlockItem class', () => {
-  it('should call list api in init()', async () => {
-    const mockList = jest.fn<(a: any[]) => any>().mockResolvedValue({
-      results: []
-    })
+  it('should call list api in init()', async (t) => {
+    const mockList = t.mock.fn<(a: any[]) => any>(() =>
+      Promise.resolve({ results: [] })
+    )
     const client = { listBlockChildren: mockList }
     const i = new BlockItem(client as any, { block_id: 'test-id-1' })
     await i.init()
-    expect(mockList).toHaveBeenCalledTimes(1)
-    expect(mockList).toHaveBeenCalledWith({ block_id: 'test-id-1' })
+    assert.strictEqual(mockList.mock.callCount(), 1)
+    assert.deepStrictEqual(mockList.mock.calls[0].arguments[0], {
+      block_id: 'test-id-1'
+    })
   })
-  it('should iterate block item', async () => {
+  it('should iterate block item', async (t) => {
     const mockBlocks = [
       { object: 'block', type: 'heading_1' },
       { object: 'block', type: 'paragraph' }
     ]
-    const mockList = jest.fn<(a: any[]) => any>().mockResolvedValue({
-      results: mockBlocks
-    })
+    const mockList = t.mock.fn<(a: any[]) => any>(() =>
+      Promise.resolve({ results: mockBlocks })
+    )
     const client = { listBlockChildren: mockList }
     const i = new BlockItem(client as any, { block_id: 'test-id-1' })
     await i.init()
-    expect(await i.block()).toEqual(mockBlocks[0])
-    expect(await i.block()).toEqual(mockBlocks[1])
-    expect(await i.block()).toBeNull()
+    assert.deepStrictEqual(await i.block(), mockBlocks[0])
+    assert.deepStrictEqual(await i.block(), mockBlocks[1])
+    assert.deepStrictEqual(await i.block(), null)
   })
-  it('should use next_cursor', async () => {
+  it('should use next_cursor', async (t) => {
     const mockBlocks1 = [
       { object: 'block', type: 'heading_1' },
       { object: 'block', type: 'paragraph' }
@@ -84,29 +87,34 @@ describe('BlockItem class', () => {
       { object: 'block', type: 'heading_2' },
       { object: 'block', type: 'code' }
     ]
-    const mockList = jest
-      .fn<(a: any[]) => any>()
-      .mockResolvedValueOnce({
+    const ite = (async function* () {
+      yield Promise.resolve({
         next_cursor: 'cursor1',
         results: mockBlocks1
       })
-      .mockResolvedValueOnce({
+      yield Promise.resolve({
         next_cursor: null,
         results: mockBlocks2
       })
+    })()
+    const mockList = t.mock.fn<(a: any[]) => any>(
+      async () => (await ite.next()).value
+    )
 
     const client = { listBlockChildren: mockList }
     const i = new BlockItem(client as any, { block_id: 'test-id-1' })
     await i.init()
-    expect(await i.block()).toEqual(mockBlocks1[0])
-    expect(await i.block()).toEqual(mockBlocks1[1])
-    expect(await i.block()).toEqual(mockBlocks2[0])
-    expect(await i.block()).toEqual(mockBlocks2[1])
-    expect(await i.block()).toBeNull()
+    assert.deepStrictEqual(await i.block(), mockBlocks1[0])
+    assert.deepStrictEqual(await i.block(), mockBlocks1[1])
+    assert.deepStrictEqual(await i.block(), mockBlocks2[0])
+    assert.deepStrictEqual(await i.block(), mockBlocks2[1])
+    assert.deepStrictEqual(await i.block(), null)
 
-    expect(mockList).toHaveBeenCalledTimes(2)
-    expect(mockList).toHaveBeenCalledWith({ block_id: 'test-id-1' })
-    expect(mockList).toHaveBeenCalledWith({
+    assert.strictEqual(mockList.mock.callCount(), 2)
+    assert.deepStrictEqual(mockList.mock.calls[0].arguments[0], {
+      block_id: 'test-id-1'
+    })
+    assert.deepStrictEqual(mockList.mock.calls[1].arguments[0], {
       block_id: 'test-id-1',
       start_cursor: 'cursor1'
     })
@@ -117,9 +125,9 @@ describe('BlockToHastBuilder class', () => {
   it('should build hast as BlockParagraphToHast', async () => {
     const b = new BlockParagraphToHast()
 
-    expect(b.outerTag()).toEqual({ name: null })
+    assert.deepStrictEqual(b.outerTag(), { name: null })
 
-    expect(
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('paragraph', {
           color: 'default',
@@ -130,9 +138,10 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([h('p', {}, ...['test1'])])
-    expect(
+      }),
+      [h('p', {}, ...['test1'])]
+    )
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('paragraph', {
           color: 'gray',
@@ -143,9 +152,10 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([h('p', { style: 'color:#9B9A97' }, ...['test1'])])
-    expect(
+      }),
+      [h('p', { style: 'color:#9B9A97' }, ...['test1'])]
+    )
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('otherother', {
           rich_text: [getMockRichTextItem('test1')]
@@ -155,12 +165,13 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([])
+      }),
+      []
+    )
 
-    expect(b.isBreak('')).toBeTruthy()
-    expect(b.isBreak('paragraph')).toBeTruthy()
-    expect(b.isBreak('other' as any)).toBeTruthy()
+    assert.strictEqual(b.isBreak(''), true)
+    assert.strictEqual(b.isBreak('paragraph'), true)
+    assert.strictEqual(b.isBreak('other' as any), true)
   })
 
   it('should build hast as BlockParagraphToHast(props)', async () => {
@@ -168,9 +179,9 @@ describe('BlockToHastBuilder class', () => {
       propertiesMap: { paragraph: { className: 'foo' } }
     })
 
-    expect(b.outerTag()).toEqual({ name: null })
+    assert.deepStrictEqual(b.outerTag(), { name: null })
 
-    expect(
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('paragraph', {
           color: 'gray',
@@ -181,18 +192,17 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([
-      h('p', { className: 'foo', style: 'color:#9B9A97' }, ...['test1'])
-    ])
+      }),
+      [h('p', { className: 'foo', style: 'color:#9B9A97' }, ...['test1'])]
+    )
   })
 
   it('should build hast as BlockHeading1ToHast', async () => {
     const b = new BlockHeading1ToHast()
 
-    expect(b.outerTag()).toEqual({ name: null })
+    assert.deepStrictEqual(b.outerTag(), { name: null })
 
-    expect(
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('heading_1', {
           color: 'default',
@@ -203,9 +213,10 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([h('h1', {}, ...['test1'])])
-    expect(
+      }),
+      [h('h1', {}, ...['test1'])]
+    )
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('heading_1', {
           color: 'gray',
@@ -216,9 +227,10 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([h('h1', { style: 'color:#9B9A97' }, ...['test1'])])
-    expect(
+      }),
+      [h('h1', { style: 'color:#9B9A97' }, ...['test1'])]
+    )
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('other', {
           rich_text: [getMockRichTextItem('test1')]
@@ -228,12 +240,13 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([])
+      }),
+      []
+    )
 
-    expect(b.isBreak('')).toBeTruthy()
-    expect(b.isBreak('heading_1')).toBeTruthy()
-    expect(b.isBreak('other' as any)).toBeTruthy()
+    assert.strictEqual(b.isBreak(''), true)
+    assert.strictEqual(b.isBreak('heading_1'), true)
+    assert.strictEqual(b.isBreak('other' as any), true)
   })
 
   it('should build hast as BlockHeading1ToHast(props)', async () => {
@@ -241,9 +254,9 @@ describe('BlockToHastBuilder class', () => {
       propertiesMap: { 'heading-1': { className: 'foo' } }
     })
 
-    expect(b.outerTag()).toEqual({ name: null })
+    assert.deepStrictEqual(b.outerTag(), { name: null })
 
-    expect(
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('heading_1', {
           color: 'gray',
@@ -254,18 +267,17 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([
-      h('h1', { className: 'foo', style: 'color:#9B9A97' }, ...['test1'])
-    ])
+      }),
+      [h('h1', { className: 'foo', style: 'color:#9B9A97' }, ...['test1'])]
+    )
   })
 
   it('should build hast as BlockHeading2ToHast', async () => {
     const b = new BlockHeading2ToHast()
 
-    expect(b.outerTag()).toEqual({ name: null })
+    assert.deepStrictEqual(b.outerTag(), { name: null })
 
-    expect(
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('heading_2', {
           color: 'default',
@@ -276,9 +288,10 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([h('h2', {}, ...['test1'])])
-    expect(
+      }),
+      [h('h2', {}, ...['test1'])]
+    )
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('heading_2', {
           color: 'gray',
@@ -289,9 +302,10 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([h('h2', { style: 'color:#9B9A97' }, ...['test1'])])
-    expect(
+      }),
+      [h('h2', { style: 'color:#9B9A97' }, ...['test1'])]
+    )
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('other', {
           rich_text: [getMockRichTextItem('test1')]
@@ -301,12 +315,13 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([])
+      }),
+      []
+    )
 
-    expect(b.isBreak('')).toBeTruthy()
-    expect(b.isBreak('heading_2')).toBeTruthy()
-    expect(b.isBreak('other' as any)).toBeTruthy()
+    assert.strictEqual(b.isBreak(''), true)
+    assert.strictEqual(b.isBreak('heading_2'), true)
+    assert.strictEqual(b.isBreak('other' as any), true)
   })
 
   it('should build hast as BlockHeading2ToHast(props)', async () => {
@@ -314,9 +329,9 @@ describe('BlockToHastBuilder class', () => {
       propertiesMap: { 'heading-2': { className: 'foo' } }
     })
 
-    expect(b.outerTag()).toEqual({ name: null })
+    assert.deepStrictEqual(b.outerTag(), { name: null })
 
-    expect(
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('heading_2', {
           color: 'gray',
@@ -327,18 +342,17 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([
-      h('h2', { className: 'foo', style: 'color:#9B9A97' }, ...['test1'])
-    ])
+      }),
+      [h('h2', { className: 'foo', style: 'color:#9B9A97' }, ...['test1'])]
+    )
   })
 
   it('should build hast as BlockHeading3ToHast', async () => {
     const b = new BlockHeading3ToHast()
 
-    expect(b.outerTag()).toEqual({ name: null })
+    assert.deepStrictEqual(b.outerTag(), { name: null })
 
-    expect(
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('heading_3', {
           color: 'default',
@@ -349,9 +363,10 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([h('h3', {}, ...['test1'])])
-    expect(
+      }),
+      [h('h3', {}, ...['test1'])]
+    )
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('heading_3', {
           color: 'gray',
@@ -362,9 +377,10 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([h('h3', { style: 'color:#9B9A97' }, ...['test1'])])
-    expect(
+      }),
+      [h('h3', { style: 'color:#9B9A97' }, ...['test1'])]
+    )
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('other', {
           rich_text: [getMockRichTextItem('test1')]
@@ -374,12 +390,13 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([])
+      }),
+      []
+    )
 
-    expect(b.isBreak('')).toBeTruthy()
-    expect(b.isBreak('heading_3')).toBeTruthy()
-    expect(b.isBreak('other' as any)).toBeTruthy()
+    assert.strictEqual(b.isBreak(''), true)
+    assert.strictEqual(b.isBreak('heading_3'), true)
+    assert.strictEqual(b.isBreak('other' as any), true)
   })
 
   it('should build hast as BlockHeading3ToHast(props)', async () => {
@@ -387,9 +404,9 @@ describe('BlockToHastBuilder class', () => {
       propertiesMap: { 'heading-3': { className: 'foo' } }
     })
 
-    expect(b.outerTag()).toEqual({ name: null })
+    assert.deepStrictEqual(b.outerTag(), { name: null })
 
-    expect(
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('heading_3', {
           color: 'gray',
@@ -400,18 +417,17 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([
-      h('h3', { className: 'foo', style: 'color:#9B9A97' }, ...['test1'])
-    ])
+      }),
+      [h('h3', { className: 'foo', style: 'color:#9B9A97' }, ...['test1'])]
+    )
   })
 
   it('should build hast as BlockCodeToHast', async () => {
     const b = new BlockCodeToHast()
 
-    expect(b.outerTag()).toEqual({ name: null })
+    assert.deepStrictEqual(b.outerTag(), { name: null })
 
-    expect(
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('code', {
           language: 'javascript',
@@ -423,15 +439,16 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([
-      h(
-        'figure',
-        {},
-        h('pre', {}, h('code', { className: 'javascript' }, ...['test1']))
-      )
-    ])
-    expect(
+      }),
+      [
+        h(
+          'figure',
+          {},
+          h('pre', {}, h('code', { className: 'javascript' }, ...['test1']))
+        )
+      ]
+    )
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('code', {
           language: 'javascript',
@@ -443,16 +460,17 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([
-      h(
-        'figure',
-        {},
-        h('pre', {}, h('code', { className: 'javascript' }, ...['test1'])),
-        h('figcaption', {}, ['caption1'])
-      )
-    ])
-    expect(
+      }),
+      [
+        h(
+          'figure',
+          {},
+          h('pre', {}, h('code', { className: 'javascript' }, ...['test1'])),
+          h('figcaption', {}, ['caption1'])
+        )
+      ]
+    )
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('other', {
           rich_text: [getMockRichTextItem('test1')]
@@ -462,12 +480,13 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([])
+      }),
+      []
+    )
 
-    expect(b.isBreak('')).toBeTruthy()
-    expect(b.isBreak('code')).toBeTruthy()
-    expect(b.isBreak('other' as any)).toBeTruthy()
+    assert.strictEqual(b.isBreak(''), true)
+    assert.strictEqual(b.isBreak('code'), true)
+    assert.strictEqual(b.isBreak('other' as any), true)
   })
 
   it('should build hast as BlockCodeToHast(props)', async () => {
@@ -480,9 +499,9 @@ describe('BlockToHastBuilder class', () => {
       }
     })
 
-    expect(b.outerTag()).toEqual({ name: null })
+    assert.deepStrictEqual(b.outerTag(), { name: null })
 
-    expect(
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('code', {
           language: 'javascript',
@@ -494,19 +513,20 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([
-      h(
-        'figure',
-        { className: 'code-class' },
+      }),
+      [
         h(
-          'pre',
-          { className: 'code-pre-class' },
-          h('code', { className: 'code-code-class javascript' }, ...['test1'])
-        ),
-        h('figcaption', { className: 'code-caption-class' }, ['caption1'])
-      )
-    ])
+          'figure',
+          { className: 'code-class' },
+          h(
+            'pre',
+            { className: 'code-pre-class' },
+            h('code', { className: 'code-code-class javascript' }, ...['test1'])
+          ),
+          h('figcaption', { className: 'code-caption-class' }, ['caption1'])
+        )
+      ]
+    )
   })
 
   it('should build hast as BlockCodeToHast(props className is array)', async () => {
@@ -514,7 +534,7 @@ describe('BlockToHastBuilder class', () => {
       propertiesMap: { 'code-code': { className: ['class1', 'class2'] } }
     })
 
-    expect(
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('code', {
           language: 'javascript',
@@ -526,26 +546,27 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([
-      h(
-        'figure',
-        {},
+      }),
+      [
         h(
-          'pre',
+          'figure',
           {},
-          h('code', { className: 'class1 class2 javascript' }, ...['test1'])
+          h(
+            'pre',
+            {},
+            h('code', { className: 'class1 class2 javascript' }, ...['test1'])
+          )
         )
-      )
-    ])
+      ]
+    )
   })
 
   it('should build hast as BlockCalloutToHast', async () => {
     const b = new BlockCalloutToHast()
 
-    expect(b.outerTag()).toEqual({ name: null })
+    assert.deepStrictEqual(b.outerTag(), { name: null })
 
-    expect(
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('callout', {
           color: 'gray',
@@ -560,16 +581,17 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([
-      h(
-        'div',
-        { style: 'color:#9B9A97' },
-        h('div', {}, 'emoji-1'),
-        h('div', {}, h('p', 'test1'))
-      )
-    ])
-    expect(
+      }),
+      [
+        h(
+          'div',
+          { style: 'color:#9B9A97' },
+          h('div', {}, 'emoji-1'),
+          h('div', {}, h('p', 'test1'))
+        )
+      ]
+    )
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('callout', {
           color: 'gray',
@@ -584,16 +606,17 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([
-      h(
-        'div',
-        { style: 'color:#9B9A97' },
-        h('div', {}, h('img', { src: 'test-url' })),
-        h('div', {}, h('p', 'test1'))
-      )
-    ])
-    expect(
+      }),
+      [
+        h(
+          'div',
+          { style: 'color:#9B9A97' },
+          h('div', {}, h('img', { src: 'test-url' })),
+          h('div', {}, h('p', 'test1'))
+        )
+      ]
+    )
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('callout', {
           color: 'gray',
@@ -608,16 +631,17 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([
-      h(
-        'div',
-        { style: 'color:#9B9A97' },
-        h('div', {}, h('img', { src: 'test-url' })),
-        h('div', {}, h('p', 'test1'))
-      )
-    ])
-    expect(
+      }),
+      [
+        h(
+          'div',
+          { style: 'color:#9B9A97' },
+          h('div', {}, h('img', { src: 'test-url' })),
+          h('div', {}, h('p', 'test1'))
+        )
+      ]
+    )
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('otherother', {
           rich_text: [getMockRichTextItem('test1')]
@@ -627,12 +651,13 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([])
+      }),
+      []
+    )
 
-    expect(b.isBreak('')).toBeTruthy()
-    expect(b.isBreak('callout')).toBeTruthy()
-    expect(b.isBreak('other' as any)).toBeTruthy()
+    assert.strictEqual(b.isBreak(''), true)
+    assert.strictEqual(b.isBreak('callout'), true)
+    assert.strictEqual(b.isBreak('other' as any), true)
   })
 
   it('should build hast as BlockCalloutToHast(props)', async () => {
@@ -645,7 +670,7 @@ describe('BlockToHastBuilder class', () => {
       }
     })
 
-    expect(
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('callout', {
           color: 'gray',
@@ -660,17 +685,18 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([
-      h(
-        'div',
-        { className: 'callout-class', style: 'color:#9B9A97' },
-        h('div', { className: 'emoji-class' }, 'emoji-1'),
-        h('div', { className: 'paragraph-class' }, h('p', 'test1'))
-      )
-    ])
+      }),
+      [
+        h(
+          'div',
+          { className: 'callout-class', style: 'color:#9B9A97' },
+          h('div', { className: 'emoji-class' }, 'emoji-1'),
+          h('div', { className: 'paragraph-class' }, h('p', 'test1'))
+        )
+      ]
+    )
 
-    expect(
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('callout', {
           color: 'gray',
@@ -685,23 +711,24 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([
-      h(
-        'div',
-        { className: 'callout-class', style: 'color:#9B9A97' },
-        h('div', { className: 'image-class' }, h('img', { src: 'test-url' })),
-        h('div', { className: 'paragraph-class' }, h('p', 'test1'))
-      )
-    ])
+      }),
+      [
+        h(
+          'div',
+          { className: 'callout-class', style: 'color:#9B9A97' },
+          h('div', { className: 'image-class' }, h('img', { src: 'test-url' })),
+          h('div', { className: 'paragraph-class' }, h('p', 'test1'))
+        )
+      ]
+    )
   })
 
   it('should build hast as BlockDividerToHast', async () => {
     const b = new BlockDividerToHast()
 
-    expect(b.outerTag()).toEqual({ name: null })
+    assert.deepStrictEqual(b.outerTag(), { name: null })
 
-    expect(
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('divider', {}),
         nest: [],
@@ -709,9 +736,10 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([h('hr')])
-    expect(
+      }),
+      [h('hr')]
+    )
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('other', {}),
         nest: [],
@@ -719,12 +747,13 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([])
+      }),
+      []
+    )
 
-    expect(b.isBreak('')).toBeTruthy()
-    expect(b.isBreak('divider')).toBeTruthy()
-    expect(b.isBreak('other' as any)).toBeTruthy()
+    assert.strictEqual(b.isBreak(''), true)
+    assert.strictEqual(b.isBreak('divider'), true)
+    assert.strictEqual(b.isBreak('other' as any), true)
   })
 
   it('should build hast as BlockDividerToHast(props)', async () => {
@@ -734,9 +763,9 @@ describe('BlockToHastBuilder class', () => {
       }
     })
 
-    expect(b.outerTag()).toEqual({ name: null })
+    assert.deepStrictEqual(b.outerTag(), { name: null })
 
-    expect(
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('divider', {}),
         nest: [],
@@ -744,16 +773,17 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([h('hr', { className: 'foo' })])
+      }),
+      [h('hr', { className: 'foo' })]
+    )
   })
 
   it('should build hast as BlockColumnListToHast', async () => {
     const b = new BlockColumnListToHast()
 
-    expect(b.outerTag()).toEqual({ name: null })
+    assert.deepStrictEqual(b.outerTag(), { name: null })
 
-    expect(
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('column_list', {}),
         nest: ['col1', 'col2'],
@@ -761,9 +791,10 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([h('div', {}, ...['col1', 'col2'])])
-    expect(
+      }),
+      [h('div', {}, ...['col1', 'col2'])]
+    )
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('other', {}),
         nest: ['col1', 'col2'],
@@ -771,12 +802,13 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([])
+      }),
+      []
+    )
 
-    expect(b.isBreak('')).toBeTruthy()
-    expect(b.isBreak('column_list')).toBeTruthy()
-    expect(b.isBreak('other' as any)).toBeTruthy()
+    assert.strictEqual(b.isBreak(''), true)
+    assert.strictEqual(b.isBreak('column_list'), true)
+    assert.strictEqual(b.isBreak('other' as any), true)
   })
 
   it('should build hast as BlockColumnListToHast(props)', async () => {
@@ -784,9 +816,9 @@ describe('BlockToHastBuilder class', () => {
       propertiesMap: { 'column-list': { className: 'foo' } }
     })
 
-    expect(b.outerTag()).toEqual({ name: null })
+    assert.deepStrictEqual(b.outerTag(), { name: null })
 
-    expect(
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('column_list', {}),
         nest: ['col1', 'col2'],
@@ -794,16 +826,17 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([h('div', { className: 'foo' }, ...['col1', 'col2'])])
+      }),
+      [h('div', { className: 'foo' }, ...['col1', 'col2'])]
+    )
   })
 
   it('should build hast as BlockColumnToHast', async () => {
     const b = new BlockColumnToHast()
 
-    expect(b.outerTag()).toEqual({ name: null })
+    assert.deepStrictEqual(b.outerTag(), { name: null })
 
-    expect(
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('column', {}),
         nest: ['test1'],
@@ -811,9 +844,10 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([h('div', {}, ...['test1'])])
-    expect(
+      }),
+      [h('div', {}, ...['test1'])]
+    )
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('other', {}),
         nest: ['test1'],
@@ -821,12 +855,13 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([])
+      }),
+      []
+    )
 
-    expect(b.isBreak('')).toBeTruthy()
-    expect(b.isBreak('column')).toBeTruthy()
-    expect(b.isBreak('other' as any)).toBeTruthy()
+    assert.strictEqual(b.isBreak(''), true)
+    assert.strictEqual(b.isBreak('column'), true)
+    assert.strictEqual(b.isBreak('other' as any), true)
   })
 
   it('should build hast as BlockColumnToHast(props)', async () => {
@@ -834,9 +869,9 @@ describe('BlockToHastBuilder class', () => {
       propertiesMap: { column: { className: 'foo' } }
     })
 
-    expect(b.outerTag()).toEqual({ name: null })
+    assert.deepStrictEqual(b.outerTag(), { name: null })
 
-    expect(
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('column', {}),
         nest: ['test1'],
@@ -844,16 +879,17 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([h('div', { className: 'foo' }, ...['test1'])])
+      }),
+      [h('div', { className: 'foo' }, ...['test1'])]
+    )
   })
 
   it('should build hast as BlockBulletedListItemToHast', async () => {
     const b = new BlockBulletedListItemToHast()
 
-    expect(b.outerTag()).toEqual({ name: 'ul', properties: {} })
+    assert.deepStrictEqual(b.outerTag(), { name: 'ul', properties: {} })
 
-    expect(
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('bulleted_list_item', {
           color: 'default',
@@ -864,9 +900,10 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([h('li', {}, ...['test1'])])
-    expect(
+      }),
+      [h('li', {}, ...['test1'])]
+    )
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('bulleted_list_item', {
           color: 'gray',
@@ -877,9 +914,10 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([h('li', { style: 'color:#9B9A97' }, ...['test1'])])
-    expect(
+      }),
+      [h('li', { style: 'color:#9B9A97' }, ...['test1'])]
+    )
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('other', {
           rich_text: [getMockRichTextItem('test1')]
@@ -889,12 +927,13 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([])
+      }),
+      []
+    )
 
-    expect(b.isBreak('')).toBeTruthy()
-    expect(b.isBreak('bulleted_list_item')).toBeFalsy()
-    expect(b.isBreak('other' as any)).toBeTruthy()
+    assert.strictEqual(b.isBreak(''), true)
+    assert.strictEqual(b.isBreak('bulleted_list_item'), false)
+    assert.strictEqual(b.isBreak('other' as any), true)
   })
 
   it('should build hast as BlockBulletedListItemToHast(props)', async () => {
@@ -905,12 +944,12 @@ describe('BlockToHastBuilder class', () => {
       }
     })
 
-    expect(b.outerTag()).toEqual({
+    assert.deepStrictEqual(b.outerTag(), {
       name: 'ul',
       properties: { className: 'foo' }
     })
 
-    expect(
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('bulleted_list_item', {
           color: 'gray',
@@ -921,18 +960,17 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([
-      h('li', { className: 'bar', style: 'color:#9B9A97' }, ...['test1'])
-    ])
+      }),
+      [h('li', { className: 'bar', style: 'color:#9B9A97' }, ...['test1'])]
+    )
   })
 
   it('should build hast as BlockNumberedListItemToHast', async () => {
     const b = new BlockNumberedListItemToHast()
 
-    expect(b.outerTag()).toEqual({ name: 'ol', properties: {} })
+    assert.deepStrictEqual(b.outerTag(), { name: 'ol', properties: {} })
 
-    expect(
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('numbered_list_item', {
           color: 'default',
@@ -943,9 +981,10 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([h('li', {}, ...['test1'])])
-    expect(
+      }),
+      [h('li', {}, ...['test1'])]
+    )
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('numbered_list_item', {
           color: 'gray',
@@ -956,9 +995,10 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([h('li', { style: 'color:#9B9A97' }, ...['test1'])])
-    expect(
+      }),
+      [h('li', { style: 'color:#9B9A97' }, ...['test1'])]
+    )
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('other', {
           rich_text: [getMockRichTextItem('test1')]
@@ -968,12 +1008,13 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([])
+      }),
+      []
+    )
 
-    expect(b.isBreak('')).toBeTruthy()
-    expect(b.isBreak('numbered_list_item')).toBeFalsy()
-    expect(b.isBreak('other' as any)).toBeTruthy()
+    assert.strictEqual(b.isBreak(''), true)
+    assert.strictEqual(b.isBreak('numbered_list_item'), false)
+    assert.strictEqual(b.isBreak('other' as any), true)
   })
 
   it('should build hast as BlockNumberedListItemToHast(props)', async () => {
@@ -984,12 +1025,12 @@ describe('BlockToHastBuilder class', () => {
       }
     })
 
-    expect(b.outerTag()).toEqual({
+    assert.deepStrictEqual(b.outerTag(), {
       name: 'ol',
       properties: { className: 'foo' }
     })
 
-    expect(
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('numbered_list_item', {
           color: 'gray',
@@ -1000,18 +1041,17 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([
-      h('li', { className: 'bar', style: 'color:#9B9A97' }, ...['test1'])
-    ])
+      }),
+      [h('li', { className: 'bar', style: 'color:#9B9A97' }, ...['test1'])]
+    )
   })
 
   it('should build hast as BlockQuoteToHast', async () => {
     const b = new BlockQuoteToHast()
 
-    expect(b.outerTag()).toEqual({ name: null })
+    assert.deepStrictEqual(b.outerTag(), { name: null })
 
-    expect(
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('quote', {
           color: 'default',
@@ -1022,9 +1062,10 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([h('blockquote', {}, ...['test1'])])
-    expect(
+      }),
+      [h('blockquote', {}, ...['test1'])]
+    )
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('quote', {
           color: 'gray',
@@ -1035,9 +1076,10 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([h('blockquote', { style: 'color:#9B9A97' }, ...['test1'])])
-    expect(
+      }),
+      [h('blockquote', { style: 'color:#9B9A97' }, ...['test1'])]
+    )
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('otherother', {
           rich_text: [getMockRichTextItem('test1')]
@@ -1047,12 +1089,13 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([])
+      }),
+      []
+    )
 
-    expect(b.isBreak('')).toBeTruthy()
-    expect(b.isBreak('quote')).toBeTruthy()
-    expect(b.isBreak('other' as any)).toBeTruthy()
+    assert.strictEqual(b.isBreak(''), true)
+    assert.strictEqual(b.isBreak('quote'), true)
+    assert.strictEqual(b.isBreak('other' as any), true)
   })
 
   it('should build hast as BlockQuoteToHast(props)', async () => {
@@ -1060,9 +1103,9 @@ describe('BlockToHastBuilder class', () => {
       propertiesMap: { quote: { className: 'foo' } }
     })
 
-    expect(b.outerTag()).toEqual({ name: null })
+    assert.deepStrictEqual(b.outerTag(), { name: null })
 
-    expect(
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('quote', {
           color: 'gray',
@@ -1073,22 +1116,23 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([
-      h(
-        'blockquote',
-        { className: 'foo', style: 'color:#9B9A97' },
-        ...['test1']
-      )
-    ])
+      }),
+      [
+        h(
+          'blockquote',
+          { className: 'foo', style: 'color:#9B9A97' },
+          ...['test1']
+        )
+      ]
+    )
   })
 
   it('should build hast as BlockTodoToHast', async () => {
     const b = new BlockTodoToHast()
 
-    expect(b.outerTag()).toEqual({ name: null })
+    assert.deepStrictEqual(b.outerTag(), { name: null })
 
-    expect(
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('to_do', {
           color: 'default',
@@ -1100,9 +1144,10 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([h('div', {}, h('div', {}), h('div', {}, ...['test1']))])
-    expect(
+      }),
+      [h('div', {}, h('div', {}), h('div', {}, ...['test1']))]
+    )
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('to_do', {
           color: 'default',
@@ -1114,9 +1159,10 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([h('div', {}, h('div', {}), h('div', {}, ...['test1']))])
-    expect(
+      }),
+      [h('div', {}, h('div', {}), h('div', {}, ...['test1']))]
+    )
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('otherother', {
           rich_text: [getMockRichTextItem('test1')]
@@ -1126,12 +1172,13 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([])
+      }),
+      []
+    )
 
-    expect(b.isBreak('')).toBeTruthy()
-    expect(b.isBreak('to_do')).toBeTruthy()
-    expect(b.isBreak('other' as any)).toBeTruthy()
+    assert.strictEqual(b.isBreak(''), true)
+    assert.strictEqual(b.isBreak('to_do'), true)
+    assert.strictEqual(b.isBreak('other' as any), true)
   })
 
   it('should build hast as BlockTodoToHast(props)', async () => {
@@ -1144,9 +1191,9 @@ describe('BlockToHastBuilder class', () => {
       }
     })
 
-    expect(b.outerTag()).toEqual({ name: null })
+    assert.deepStrictEqual(b.outerTag(), { name: null })
 
-    expect(
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('to_do', {
           color: 'default',
@@ -1158,16 +1205,17 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([
-      h(
-        'div',
-        { className: 'todo_class' },
-        h('div', { className: 'not_checked_class' }),
-        h('div', { className: 'text_class' }, ...['test1'])
-      )
-    ])
-    expect(
+      }),
+      [
+        h(
+          'div',
+          { className: 'todo_class' },
+          h('div', { className: 'not_checked_class' }),
+          h('div', { className: 'text_class' }, ...['test1'])
+        )
+      ]
+    )
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('to_do', {
           color: 'default',
@@ -1179,23 +1227,24 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([
-      h(
-        'div',
-        { className: 'todo_class' },
-        h('div', { className: 'checked_class' }),
-        h('div', { className: 'text_class' }, ...['test1'])
-      )
-    ])
+      }),
+      [
+        h(
+          'div',
+          { className: 'todo_class' },
+          h('div', { className: 'checked_class' }),
+          h('div', { className: 'text_class' }, ...['test1'])
+        )
+      ]
+    )
   })
 
   it('should build hast as BlockToggleToHast', async () => {
     const b = new BlockToggleToHast()
 
-    expect(b.outerTag()).toEqual({ name: null })
+    assert.deepStrictEqual(b.outerTag(), { name: null })
 
-    expect(
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('toggle', {
           color: 'default',
@@ -1206,9 +1255,10 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([h('details', {}, h('summary', {}, ...['test1']), ['details1'])])
-    expect(
+      }),
+      [h('details', {}, h('summary', {}, ...['test1']), ['details1'])]
+    )
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('toggle', {
           color: 'gray',
@@ -1219,13 +1269,17 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([
-      h('details', { style: 'color:#9B9A97' }, h('summary', {}, ...['test1']), [
-        'details1'
-      ])
-    ])
-    expect(
+      }),
+      [
+        h(
+          'details',
+          { style: 'color:#9B9A97' },
+          h('summary', {}, ...['test1']),
+          ['details1']
+        )
+      ]
+    )
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('otherother', {
           rich_text: [getMockRichTextItem('test1')]
@@ -1235,12 +1289,13 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([])
+      }),
+      []
+    )
 
-    expect(b.isBreak('')).toBeTruthy()
-    expect(b.isBreak('paragraph')).toBeTruthy()
-    expect(b.isBreak('other' as any)).toBeTruthy()
+    assert.strictEqual(b.isBreak(''), true)
+    assert.strictEqual(b.isBreak('paragraph'), true)
+    assert.strictEqual(b.isBreak('other' as any), true)
   })
 
   it('should build hast as BlockToggleToHast(props)', async () => {
@@ -1251,9 +1306,9 @@ describe('BlockToHastBuilder class', () => {
       }
     })
 
-    expect(b.outerTag()).toEqual({ name: null })
+    assert.deepStrictEqual(b.outerTag(), { name: null })
 
-    expect(
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('toggle', {
           color: 'gray',
@@ -1264,23 +1319,24 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([
-      h(
-        'details',
-        { className: 'toggle-class', style: 'color:#9B9A97' },
-        h('summary', { className: 'toggle-summary-class' }, ...['test1']),
-        ['details1']
-      )
-    ])
+      }),
+      [
+        h(
+          'details',
+          { className: 'toggle-class', style: 'color:#9B9A97' },
+          h('summary', { className: 'toggle-summary-class' }, ...['test1']),
+          ['details1']
+        )
+      ]
+    )
   })
 
   it('should build hast as BlockTableToHast', async () => {
     const b = new BlockTableToHast()
 
-    expect(b.outerTag()).toEqual({ name: null })
+    assert.deepStrictEqual(b.outerTag(), { name: null })
 
-    expect(
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('table', {
           rich_text: []
@@ -1290,9 +1346,10 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([h('table', {}, ...['rows'])])
-    expect(
+      }),
+      [h('table', {}, ...['rows'])]
+    )
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('other', {
           rich_text: []
@@ -1302,12 +1359,13 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([])
+      }),
+      []
+    )
 
-    expect(b.isBreak('')).toBeTruthy()
-    expect(b.isBreak('table')).toBeTruthy()
-    expect(b.isBreak('other' as any)).toBeTruthy()
+    assert.strictEqual(b.isBreak(''), true)
+    assert.strictEqual(b.isBreak('table'), true)
+    assert.strictEqual(b.isBreak('other' as any), true)
   })
 
   it('should build hast as BlockTableToHast(props)', async () => {
@@ -1315,9 +1373,9 @@ describe('BlockToHastBuilder class', () => {
       propertiesMap: { table: { className: 'foo' } }
     })
 
-    expect(b.outerTag()).toEqual({ name: null })
+    assert.deepStrictEqual(b.outerTag(), { name: null })
 
-    expect(
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('table', {
           rich_text: []
@@ -1327,16 +1385,17 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([h('table', { className: 'foo' }, ...['rows'])])
+      }),
+      [h('table', { className: 'foo' }, ...['rows'])]
+    )
   })
 
   it('should build hast as BlockTablRowToHast', async () => {
     const b = new BlockTableRowToHast()
 
-    expect(b.outerTag()).toEqual({ name: null })
+    assert.deepStrictEqual(b.outerTag(), { name: null })
 
-    expect(
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('table_row', {
           cells: [
@@ -1349,9 +1408,10 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([h('tr', [h('td', {}, ...['test1']), h('td', {}, ...['test2'])])])
-    expect(
+      }),
+      [h('tr', [h('td', {}, ...['test1']), h('td', {}, ...['test2'])])]
+    )
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('table_row', {
           cells: [
@@ -1369,9 +1429,10 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([h('tr', [h('th', {}, ...['test1']), h('th', {}, ...['test2'])])])
-    expect(
+      }),
+      [h('tr', [h('th', {}, ...['test1']), h('th', {}, ...['test2'])])]
+    )
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('table_row', {
           cells: [
@@ -1389,9 +1450,10 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([h('tr', [h('th', {}, ...['test1']), h('td', {}, ...['test2'])])])
-    expect(
+      }),
+      [h('tr', [h('th', {}, ...['test1']), h('td', {}, ...['test2'])])]
+    )
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('other', {
           cells: [
@@ -1404,12 +1466,13 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([])
+      }),
+      []
+    )
 
-    expect(b.isBreak('')).toBeTruthy()
-    expect(b.isBreak('table_row')).toBeTruthy()
-    expect(b.isBreak('other' as any)).toBeTruthy()
+    assert.strictEqual(b.isBreak(''), true)
+    assert.strictEqual(b.isBreak('table_row'), true)
+    assert.strictEqual(b.isBreak('other' as any), true)
   })
 
   it('should build hast as BlockTablRowToHast(props)', async () => {
@@ -1424,9 +1487,9 @@ describe('BlockToHastBuilder class', () => {
       }
     })
 
-    expect(b.outerTag()).toEqual({ name: null })
+    assert.deepStrictEqual(b.outerTag(), { name: null })
 
-    expect(
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('table_row', {
           cells: [
@@ -1439,14 +1502,15 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([
-      h('tr', { className: 'tr-class' }, [
-        h('td', { className: 'td-class' }, ...['test1']),
-        h('td', { className: 'td-class' }, ...['test2'])
-      ])
-    ])
-    expect(
+      }),
+      [
+        h('tr', { className: 'tr-class' }, [
+          h('td', { className: 'td-class' }, ...['test1']),
+          h('td', { className: 'td-class' }, ...['test2'])
+        ])
+      ]
+    )
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('table_row', {
           cells: [
@@ -1464,14 +1528,15 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([
-      h('tr', { className: 'tr-class' }, [
-        h('th', { className: 'th-top-left-class' }, ...['test1']),
-        h('th', { className: 'th-top-class' }, ...['test2'])
-      ])
-    ])
-    expect(
+      }),
+      [
+        h('tr', { className: 'tr-class' }, [
+          h('th', { className: 'th-top-left-class' }, ...['test1']),
+          h('th', { className: 'th-top-class' }, ...['test2'])
+        ])
+      ]
+    )
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('table_row', {
           cells: [
@@ -1489,14 +1554,15 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([
-      h('tr', { className: 'tr-class' }, [
-        h('th', { className: 'th-top-left-class' }, ...['test1']),
-        h('td', { className: 'td-class' }, ...['test2'])
-      ])
-    ])
-    expect(
+      }),
+      [
+        h('tr', { className: 'tr-class' }, [
+          h('th', { className: 'th-top-left-class' }, ...['test1']),
+          h('td', { className: 'td-class' }, ...['test2'])
+        ])
+      ]
+    )
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('table_row', {
           cells: [
@@ -1514,13 +1580,14 @@ describe('BlockToHastBuilder class', () => {
         index: 1,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([
-      h('tr', { className: 'tr-class' }, [
-        h('th', { className: 'th-left-class' }, ...['test1']),
-        h('td', { className: 'td-class' }, ...['test2'])
-      ])
-    ])
+      }),
+      [
+        h('tr', { className: 'tr-class' }, [
+          h('th', { className: 'th-left-class' }, ...['test1']),
+          h('td', { className: 'td-class' }, ...['test2'])
+        ])
+      ]
+    )
   })
 
   it('should build hast as BlockTablRowToHast(props just th)', async () => {
@@ -1532,9 +1599,9 @@ describe('BlockToHastBuilder class', () => {
       }
     })
 
-    expect(b.outerTag()).toEqual({ name: null })
+    assert.deepStrictEqual(b.outerTag(), { name: null })
 
-    expect(
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('table_row', {
           cells: [
@@ -1552,14 +1619,15 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([
-      h('tr', { className: 'tr-class' }, [
-        h('th', { className: 'th-class' }, ...['test1']),
-        h('th', { className: 'th-class' }, ...['test2'])
-      ])
-    ])
-    expect(
+      }),
+      [
+        h('tr', { className: 'tr-class' }, [
+          h('th', { className: 'th-class' }, ...['test1']),
+          h('th', { className: 'th-class' }, ...['test2'])
+        ])
+      ]
+    )
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('table_row', {
           cells: [
@@ -1577,14 +1645,15 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([
-      h('tr', { className: 'tr-class' }, [
-        h('th', { className: 'th-class' }, ...['test1']),
-        h('td', { className: 'td-class' }, ...['test2'])
-      ])
-    ])
-    expect(
+      }),
+      [
+        h('tr', { className: 'tr-class' }, [
+          h('th', { className: 'th-class' }, ...['test1']),
+          h('td', { className: 'td-class' }, ...['test2'])
+        ])
+      ]
+    )
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('table_row', {
           cells: [
@@ -1602,21 +1671,22 @@ describe('BlockToHastBuilder class', () => {
         index: 1,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([
-      h('tr', { className: 'tr-class' }, [
-        h('th', { className: 'th-class' }, ...['test1']),
-        h('td', { className: 'td-class' }, ...['test2'])
-      ])
-    ])
+      }),
+      [
+        h('tr', { className: 'tr-class' }, [
+          h('th', { className: 'th-class' }, ...['test1']),
+          h('td', { className: 'td-class' }, ...['test2'])
+        ])
+      ]
+    )
   })
 
   it('should build hast as BlockBookmarkToHast', async () => {
     const b = new BlockBookmarkToHast()
 
-    expect(b.outerTag()).toEqual({ name: null })
+    assert.deepStrictEqual(b.outerTag(), { name: null })
 
-    expect(
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('bookmark', {
           url: 'test-url',
@@ -1627,9 +1697,10 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([h('figure', {}, h('a', { href: 'test-url' }, ['test-url']))])
-    expect(
+      }),
+      [h('figure', {}, h('a', { href: 'test-url' }, ['test-url']))]
+    )
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('bookmark', {
           url: 'test-url',
@@ -1640,16 +1711,17 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([
-      h(
-        'figure',
-        {},
-        h('a', { href: 'test-url' }, ['test-url']),
-        h('figcaption', {}, ['test1'])
-      )
-    ])
-    expect(
+      }),
+      [
+        h(
+          'figure',
+          {},
+          h('a', { href: 'test-url' }, ['test-url']),
+          h('figcaption', {}, ['test1'])
+        )
+      ]
+    )
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('otherother', {
           rich_text: [getMockRichTextItem('test1')]
@@ -1659,12 +1731,13 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([])
+      }),
+      []
+    )
 
-    expect(b.isBreak('')).toBeTruthy()
-    expect(b.isBreak('paragraph')).toBeTruthy()
-    expect(b.isBreak('other' as any)).toBeTruthy()
+    assert.strictEqual(b.isBreak(''), true)
+    assert.strictEqual(b.isBreak('paragraph'), true)
+    assert.strictEqual(b.isBreak('other' as any), true)
   })
 
   it('should build hast as BlockBookmarkToHast(props)', async () => {
@@ -1676,9 +1749,9 @@ describe('BlockToHastBuilder class', () => {
       }
     })
 
-    expect(b.outerTag()).toEqual({ name: null })
+    assert.deepStrictEqual(b.outerTag(), { name: null })
 
-    expect(
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('bookmark', {
           url: 'test-url',
@@ -1689,23 +1762,24 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([
-      h(
-        'figure',
-        { className: 'foo' },
-        h('a', { className: 'bar', href: 'test-url' }, ['test-url']),
-        h('figcaption', { className: 'baz' }, ['test1'])
-      )
-    ])
+      }),
+      [
+        h(
+          'figure',
+          { className: 'foo' },
+          h('a', { className: 'bar', href: 'test-url' }, ['test-url']),
+          h('figcaption', { className: 'baz' }, ['test1'])
+        )
+      ]
+    )
   })
 
   it('should build hast as BlockImageToHast', async () => {
     const b = new BlockImageToHast()
 
-    expect(b.outerTag()).toEqual({ name: null })
+    assert.deepStrictEqual(b.outerTag(), { name: null })
 
-    expect(
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('image', {
           type: 'external',
@@ -1719,16 +1793,17 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([
-      h(
-        'figure',
-        {},
-        h('img', { src: 'test-url' }),
-        h('figcaption', {}, 'test1')
-      )
-    ])
-    expect(
+      }),
+      [
+        h(
+          'figure',
+          {},
+          h('img', { src: 'test-url' }),
+          h('figcaption', {}, 'test1')
+        )
+      ]
+    )
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('image', {
           type: 'file',
@@ -1742,16 +1817,17 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([
-      h(
-        'figure',
-        {},
-        h('img', { src: 'test-url' }),
-        h('figcaption', {}, 'test1')
-      )
-    ])
-    expect(
+      }),
+      [
+        h(
+          'figure',
+          {},
+          h('img', { src: 'test-url' }),
+          h('figcaption', {}, 'test1')
+        )
+      ]
+    )
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('image', {
           type: 'external',
@@ -1765,9 +1841,10 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([h('figure', {}, h('img', { src: 'test-url' }))])
-    expect(
+      }),
+      [h('figure', {}, h('img', { src: 'test-url' }))]
+    )
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('other', {
           rich_text: [getMockRichTextItem('test1')]
@@ -1777,12 +1854,13 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([])
+      }),
+      []
+    )
 
-    expect(b.isBreak('')).toBeTruthy()
-    expect(b.isBreak('image')).toBeTruthy()
-    expect(b.isBreak('other' as any)).toBeTruthy()
+    assert.strictEqual(b.isBreak(''), true)
+    assert.strictEqual(b.isBreak('image'), true)
+    assert.strictEqual(b.isBreak('other' as any), true)
   })
 
   it('should build hast as BlockImageToHast(props)', async () => {
@@ -1794,9 +1872,9 @@ describe('BlockToHastBuilder class', () => {
       }
     })
 
-    expect(b.outerTag()).toEqual({ name: null })
+    assert.deepStrictEqual(b.outerTag(), { name: null })
 
-    expect(
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('image', {
           type: 'external',
@@ -1810,13 +1888,14 @@ describe('BlockToHastBuilder class', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([
-      h('figure', { className: 'foo' }, [
-        h('img', { className: 'bar', src: 'test-url' }),
-        h('figcaption', { className: 'baz' }, 'test1')
-      ])
-    ])
+      }),
+      [
+        h('figure', { className: 'foo' }, [
+          h('img', { className: 'bar', src: 'test-url' }),
+          h('figcaption', { className: 'baz' }, 'test1')
+        ])
+      ]
+    )
   })
 })
 
@@ -1824,9 +1903,9 @@ describe('BlockToHastBuilder class(defaultClassName)', () => {
   it('should build hast with default class name', async () => {
     const b = new BlockParagraphToHast({ defaultClassname: true })
 
-    expect(b.outerTag()).toEqual({ name: null })
+    assert.deepStrictEqual(b.outerTag(), { name: null })
 
-    expect(
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('paragraph', {
           color: 'default',
@@ -1837,8 +1916,9 @@ describe('BlockToHastBuilder class(defaultClassName)', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([h('p', { className: 'paragraph' }, ...['test1'])])
+      }),
+      [h('p', { className: 'paragraph' }, ...['test1'])]
+    )
   })
 
   it('should build hast with mapped class name', async () => {
@@ -1847,9 +1927,9 @@ describe('BlockToHastBuilder class(defaultClassName)', () => {
       propertiesMap: { paragraph: { className: 'foo' } }
     })
 
-    expect(b.outerTag()).toEqual({ name: null })
+    assert.deepStrictEqual(b.outerTag(), { name: null })
 
-    expect(
+    assert.deepStrictEqual(
       await b.build({
         block: getMockBlock('paragraph', {
           color: 'gray',
@@ -1860,10 +1940,9 @@ describe('BlockToHastBuilder class(defaultClassName)', () => {
         index: 0,
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
-      })
-    ).toEqual([
-      h('p', { className: 'foo', style: 'color:#9B9A97' }, ...['test1'])
-    ])
+      }),
+      [h('p', { className: 'foo', style: 'color:#9B9A97' }, ...['test1'])]
+    )
   })
 })
 
@@ -1883,7 +1962,7 @@ describe('SurroundElement class', () => {
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
-    expect(surround.content()).toEqual([h('p', {}, ...['test1'])])
+    assert.deepStrictEqual(surround.content(), [h('p', {}, ...['test1'])])
 
     surround.reset()
     await surround.append({
@@ -1897,7 +1976,7 @@ describe('SurroundElement class', () => {
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
-    expect(surround.content()).toEqual([h('h1', {}, ...['test1'])])
+    assert.deepStrictEqual(surround.content(), [h('h1', {}, ...['test1'])])
 
     surround.reset()
     await surround.append({
@@ -1911,7 +1990,7 @@ describe('SurroundElement class', () => {
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
-    expect(surround.content()).toEqual([h('h2', {}, ...['test1'])])
+    assert.deepStrictEqual(surround.content(), [h('h2', {}, ...['test1'])])
 
     surround.reset()
     await surround.append({
@@ -1925,7 +2004,7 @@ describe('SurroundElement class', () => {
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
-    expect(surround.content()).toEqual([h('h3', {}, ...['test1'])])
+    assert.deepStrictEqual(surround.content(), [h('h3', {}, ...['test1'])])
 
     surround.reset()
     await surround.append({
@@ -1940,7 +2019,7 @@ describe('SurroundElement class', () => {
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
-    expect(surround.content()).toEqual([
+    assert.deepStrictEqual(surround.content(), [
       h(
         'figure',
         {},
@@ -1964,7 +2043,7 @@ describe('SurroundElement class', () => {
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
-    expect(surround.content()).toEqual([
+    assert.deepStrictEqual(surround.content(), [
       h(
         'div',
         { style: 'color:#9B9A97' },
@@ -1982,7 +2061,7 @@ describe('SurroundElement class', () => {
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
-    expect(surround.content()).toEqual([h('hr')])
+    assert.deepStrictEqual(surround.content(), [h('hr')])
 
     surround.reset()
     await surround.append({
@@ -1993,7 +2072,9 @@ describe('SurroundElement class', () => {
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
-    expect(surround.content()).toEqual([h('div', {}, ...['col1', 'col2'])])
+    assert.deepStrictEqual(surround.content(), [
+      h('div', {}, ...['col1', 'col2'])
+    ])
 
     surround.reset()
     await surround.append({
@@ -2004,7 +2085,7 @@ describe('SurroundElement class', () => {
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
-    expect(surround.content()).toEqual([h('div', {}, ...['test1'])])
+    assert.deepStrictEqual(surround.content(), [h('div', {}, ...['test1'])])
 
     surround.reset()
     await surround.append({
@@ -2017,7 +2098,7 @@ describe('SurroundElement class', () => {
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
-    expect(surround.content()).toEqual([h('li', {}, ...['test1'])])
+    assert.deepStrictEqual(surround.content(), [h('li', {}, ...['test1'])])
 
     surround.reset()
     await surround.append({
@@ -2030,7 +2111,7 @@ describe('SurroundElement class', () => {
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
-    expect(surround.content()).toEqual([h('li', {}, ...['test1'])])
+    assert.deepStrictEqual(surround.content(), [h('li', {}, ...['test1'])])
 
     surround.reset()
     await surround.append({
@@ -2043,7 +2124,9 @@ describe('SurroundElement class', () => {
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
-    expect(surround.content()).toEqual([h('blockquote', {}, ...['test1'])])
+    assert.deepStrictEqual(surround.content(), [
+      h('blockquote', {}, ...['test1'])
+    ])
 
     surround.reset()
     await surround.append({
@@ -2058,7 +2141,7 @@ describe('SurroundElement class', () => {
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
-    expect(surround.content()).toEqual([
+    assert.deepStrictEqual(surround.content(), [
       h('div', {}, h('div', {}), h('div', {}, ...['test1']))
     ])
 
@@ -2074,7 +2157,7 @@ describe('SurroundElement class', () => {
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
-    expect(surround.content()).toEqual([
+    assert.deepStrictEqual(surround.content(), [
       h('details', {}, h('summary', {}, ...['test1']), ['details1'])
     ])
 
@@ -2089,7 +2172,7 @@ describe('SurroundElement class', () => {
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
-    expect(surround.content()).toEqual([h('table', {}, ...['rows'])])
+    assert.deepStrictEqual(surround.content(), [h('table', {}, ...['rows'])])
 
     surround.reset()
     await surround.append({
@@ -2102,7 +2185,7 @@ describe('SurroundElement class', () => {
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
-    expect(surround.content()).toEqual([
+    assert.deepStrictEqual(surround.content(), [
       h('tr', [h('td', {}, ...['test1']), h('td', {}, ...['test2'])])
     ])
 
@@ -2119,7 +2202,7 @@ describe('SurroundElement class', () => {
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
-    expect(surround.content()).toEqual([
+    assert.deepStrictEqual(surround.content(), [
       h(
         'figure',
         {},
@@ -2132,12 +2215,12 @@ describe('SurroundElement class', () => {
   it('should nesting content', async () => {
     const surround = new SurroundElement('')
     surround.nest('test-nest-1')
-    expect(surround.content()).toEqual(['test-nest-1'])
+    assert.deepStrictEqual(surround.content(), ['test-nest-1'])
   })
 
   it('should return tag name ', async () => {
     const surround = new SurroundElement('')
-    expect(surround.outerTag()).toBeNull()
+    assert.strictEqual(surround.outerTag(), null)
     await surround.append({
       block: getMockBlock('paragraph'),
       nest: [],
@@ -2146,7 +2229,7 @@ describe('SurroundElement class', () => {
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
-    expect(surround.outerTag()).toEqual({ name: null })
+    assert.deepStrictEqual(surround.outerTag(), { name: null })
     await surround.append({
       block: getMockBlock('heading_1'),
       nest: [],
@@ -2155,7 +2238,7 @@ describe('SurroundElement class', () => {
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
-    expect(surround.outerTag()).toEqual({ name: null })
+    assert.deepStrictEqual(surround.outerTag(), { name: null })
     await surround.append({
       block: getMockBlock('heading_2'),
       nest: [],
@@ -2164,7 +2247,7 @@ describe('SurroundElement class', () => {
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
-    expect(surround.outerTag()).toEqual({ name: null })
+    assert.deepStrictEqual(surround.outerTag(), { name: null })
     await surround.append({
       block: getMockBlock('heading_3'),
       nest: [],
@@ -2173,7 +2256,7 @@ describe('SurroundElement class', () => {
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
-    expect(surround.outerTag()).toEqual({ name: null })
+    assert.deepStrictEqual(surround.outerTag(), { name: null })
     await surround.append({
       block: getMockBlock('code', {
         rich_text: ['test1'],
@@ -2185,7 +2268,7 @@ describe('SurroundElement class', () => {
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
-    expect(surround.outerTag()).toEqual({ name: null })
+    assert.deepStrictEqual(surround.outerTag(), { name: null })
     await surround.append({
       block: getMockBlock('callout', {
         color: 'gray',
@@ -2201,7 +2284,7 @@ describe('SurroundElement class', () => {
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
-    expect(surround.outerTag()).toEqual({ name: null })
+    assert.deepStrictEqual(surround.outerTag(), { name: null })
     await surround.append({
       block: getMockBlock('divider'),
       nest: [],
@@ -2210,7 +2293,7 @@ describe('SurroundElement class', () => {
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
-    expect(surround.outerTag()).toEqual({ name: null })
+    assert.deepStrictEqual(surround.outerTag(), { name: null })
     surround.reset()
     await surround.append({
       block: getMockBlock('column_list', {}),
@@ -2220,7 +2303,7 @@ describe('SurroundElement class', () => {
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
-    expect(surround.outerTag()).toEqual({ name: null })
+    assert.deepStrictEqual(surround.outerTag(), { name: null })
     surround.reset()
     await surround.append({
       block: getMockBlock('column', {}),
@@ -2230,7 +2313,7 @@ describe('SurroundElement class', () => {
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
-    expect(surround.outerTag()).toEqual({ name: null })
+    assert.deepStrictEqual(surround.outerTag(), { name: null })
     await surround.append({
       block: getMockBlock('bulleted_list_item'),
       nest: [],
@@ -2239,7 +2322,7 @@ describe('SurroundElement class', () => {
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
-    expect(surround.outerTag()).toEqual({ name: 'ul', properties: {} })
+    assert.deepStrictEqual(surround.outerTag(), { name: 'ul', properties: {} })
     await surround.append({
       block: getMockBlock('numbered_list_item'),
       nest: [],
@@ -2248,7 +2331,7 @@ describe('SurroundElement class', () => {
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
-    expect(surround.outerTag()).toEqual({ name: 'ol', properties: {} })
+    assert.deepStrictEqual(surround.outerTag(), { name: 'ol', properties: {} })
     await surround.append({
       block: getMockBlock('table'),
       nest: [],
@@ -2257,7 +2340,7 @@ describe('SurroundElement class', () => {
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
-    expect(surround.outerTag()).toEqual({ name: null })
+    assert.deepStrictEqual(surround.outerTag(), { name: null })
     await surround.append({
       block: getMockBlock('quote', {
         rich_text: [getMockRichTextItem('test1')]
@@ -2268,7 +2351,7 @@ describe('SurroundElement class', () => {
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
-    expect(surround.outerTag()).toEqual({ name: null })
+    assert.deepStrictEqual(surround.outerTag(), { name: null })
     await surround.append({
       block: getMockBlock('to_do', {
         color: 'default',
@@ -2281,7 +2364,7 @@ describe('SurroundElement class', () => {
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
-    expect(surround.outerTag()).toEqual({ name: null })
+    assert.deepStrictEqual(surround.outerTag(), { name: null })
     surround.reset()
     await surround.append({
       block: getMockBlock('toggle', {
@@ -2294,7 +2377,7 @@ describe('SurroundElement class', () => {
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
-    expect(surround.outerTag()).toEqual({ name: null })
+    assert.deepStrictEqual(surround.outerTag(), { name: null })
     await surround.append({
       block: getMockBlock('table_row', { cells: [] }),
       nest: [],
@@ -2303,7 +2386,7 @@ describe('SurroundElement class', () => {
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
-    expect(surround.outerTag()).toEqual({ name: null })
+    assert.deepStrictEqual(surround.outerTag(), { name: null })
     await surround.append({
       block: getMockBlock('bookmark', {
         url: 'test-url',
@@ -2315,7 +2398,7 @@ describe('SurroundElement class', () => {
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
-    expect(surround.outerTag()).toEqual({ name: null })
+    assert.deepStrictEqual(surround.outerTag(), { name: null })
     await surround.append({
       block: getMockBlock('image', {
         type: 'external',
@@ -2328,7 +2411,7 @@ describe('SurroundElement class', () => {
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
-    expect(surround.outerTag()).toEqual({ name: null })
+    assert.deepStrictEqual(surround.outerTag(), { name: null })
     await surround.append({
       block: getMockBlock('unsuported', { cells: [] }),
       nest: [],
@@ -2337,14 +2420,14 @@ describe('SurroundElement class', () => {
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
-    expect(surround.outerTag()).toBeNull()
+    assert.strictEqual(surround.outerTag(), null)
   })
 
   it('should reset block type in previous', async () => {
     const surround = new SurroundElement('paragraph')
-    expect((surround as any).prevType).toEqual('paragraph')
+    assert.deepStrictEqual((surround as any).prevType, 'paragraph')
     surround.reset()
-    expect((surround as any).prevType).toEqual('')
+    assert.deepStrictEqual((surround as any).prevType, '')
   })
 
   it('should break by block type', async () => {
@@ -2359,7 +2442,7 @@ describe('SurroundElement class', () => {
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
-    expect(surround.isBreak('paragraph')).toBeTruthy()
+    assert.strictEqual(surround.isBreak('paragraph'), true)
 
     surround.reset()
     await surround.append({
@@ -2370,7 +2453,7 @@ describe('SurroundElement class', () => {
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
-    expect(surround.isBreak('paragraph')).toBeTruthy()
+    assert.strictEqual(surround.isBreak('paragraph'), true)
 
     surround.reset()
     await surround.append({
@@ -2381,7 +2464,7 @@ describe('SurroundElement class', () => {
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
-    expect(surround.isBreak('numbered_list_item')).toBeTruthy()
+    assert.strictEqual(surround.isBreak('numbered_list_item'), true)
 
     surround.reset()
     await surround.append({
@@ -2392,7 +2475,7 @@ describe('SurroundElement class', () => {
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
-    expect(surround.isBreak('paragraph')).toBeTruthy()
+    assert.strictEqual(surround.isBreak('paragraph'), true)
 
     surround.reset()
     await surround.append({
@@ -2403,7 +2486,7 @@ describe('SurroundElement class', () => {
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
-    expect(surround.isBreak('bulleted_list_item')).toBeTruthy()
+    assert.strictEqual(surround.isBreak('bulleted_list_item'), true)
 
     surround.reset()
     await surround.append({
@@ -2416,7 +2499,7 @@ describe('SurroundElement class', () => {
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
-    expect(surround.isBreak('quote')).toBeTruthy()
+    assert.strictEqual(surround.isBreak('quote'), true)
 
     surround.reset()
     await surround.append({
@@ -2431,7 +2514,7 @@ describe('SurroundElement class', () => {
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
-    expect(surround.isBreak('to_do')).toBeTruthy()
+    assert.strictEqual(surround.isBreak('to_do'), true)
 
     surround.reset()
     surround.reset()
@@ -2446,7 +2529,7 @@ describe('SurroundElement class', () => {
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
-    expect(surround.isBreak('toggle')).toBeTruthy()
+    assert.strictEqual(surround.isBreak('toggle'), true)
 
     surround.reset()
     await surround.append({
@@ -2457,7 +2540,7 @@ describe('SurroundElement class', () => {
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
-    expect(surround.isBreak('column_list')).toBeTruthy()
+    assert.strictEqual(surround.isBreak('column_list'), true)
 
     surround.reset()
     await surround.append({
@@ -2468,7 +2551,7 @@ describe('SurroundElement class', () => {
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
-    expect(surround.isBreak('column_list')).toBeTruthy()
+    assert.strictEqual(surround.isBreak('column_list'), true)
 
     surround.reset()
     await surround.append({
@@ -2479,7 +2562,7 @@ describe('SurroundElement class', () => {
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
-    expect(surround.isBreak('table')).toBeTruthy()
+    assert.strictEqual(surround.isBreak('table'), true)
 
     surround.reset()
     await surround.append({
@@ -2492,7 +2575,7 @@ describe('SurroundElement class', () => {
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
-    expect(surround.isBreak('table_row')).toBeTruthy()
+    assert.strictEqual(surround.isBreak('table_row'), true)
 
     surround.reset()
     await surround.append({
@@ -2506,7 +2589,7 @@ describe('SurroundElement class', () => {
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
-    expect(surround.isBreak('bookmark')).toBeTruthy()
+    assert.strictEqual(surround.isBreak('bookmark'), true)
 
     surround.reset()
     await surround.append({
@@ -2521,7 +2604,7 @@ describe('SurroundElement class', () => {
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
-    expect(surround.isBreak('image')).toBeTruthy()
+    assert.strictEqual(surround.isBreak('image'), true)
 
     surround.reset()
     await surround.append({
@@ -2532,14 +2615,14 @@ describe('SurroundElement class', () => {
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
-    expect(surround.isBreak('paragraph')).toBeTruthy()
+    assert.strictEqual(surround.isBreak('paragraph'), true)
   })
 
   it('should not break by block type', async () => {
     const surround = new SurroundElement('')
 
     surround.reset()
-    expect(surround.isBreak('paragraph')).toBeFalsy()
+    assert.strictEqual(surround.isBreak('paragraph'), false)
 
     surround.reset()
     await surround.append({
@@ -2550,7 +2633,7 @@ describe('SurroundElement class', () => {
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
-    expect(surround.isBreak('bulleted_list_item')).toBeFalsy()
+    assert.strictEqual(surround.isBreak('bulleted_list_item'), false)
 
     surround.reset()
     await surround.append({
@@ -2561,6 +2644,6 @@ describe('SurroundElement class', () => {
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
-    expect(surround.isBreak('numbered_list_item')).toBeFalsy()
+    assert.strictEqual(surround.isBreak('numbered_list_item'), false)
   })
 })
