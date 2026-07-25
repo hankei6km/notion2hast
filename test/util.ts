@@ -1,4 +1,4 @@
-import { RichTextToHast } from '../src/lib/richtext.js'
+import { RichTextToHast } from '../src/lib/richtext.ts'
 
 export function getMockRichTextItem(
   text: string,

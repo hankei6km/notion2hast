@@ -1,10 +1,10 @@
 import { h } from 'hastscript'
 import type { Child } from 'hastscript'
-import { ToHastOpts } from './types.js'
-import { Client } from './client.js'
-import { BlockItem, SurroundElement } from './block.js'
-import { RichTextToHast } from './richtext.js'
-import { ColorProps } from './color.js'
+import type { ToHastOpts } from './types.ts'
+import { Client } from './client.ts'
+import { BlockItem, SurroundElement } from './block.ts'
+import { RichTextToHast } from './richtext.ts'
+import { ColorProps } from './color.ts'
 
 export async function blockToHast(
   client: Client,

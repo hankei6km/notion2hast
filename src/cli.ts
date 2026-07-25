@@ -1,9 +1,9 @@
 import { Writable } from 'stream'
 import { toHtml as hastToHtml } from 'hast-util-to-html'
 import { Client as NotionClient } from '@notionhq/client'
-import { ClientOptions } from '@notionhq/client/build/src/Client'
-import { Client } from './lib/client.js'
-import { blockToHast } from './lib/notion2hast.js'
+import type { ClientOptions } from '@notionhq/client/build/src/Client.d.ts'
+import { Client } from './lib/client.ts'
+import { blockToHast } from './lib/notion2hast.ts'
 
 class CliClient extends Client {
   private client: NotionClient

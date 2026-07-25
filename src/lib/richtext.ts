@@ -1,13 +1,13 @@
 import { h } from 'hastscript'
 import type { Child, Properties } from 'hastscript'
-import { ColorProps } from './color.js'
-import { mergeProps } from './props.js'
-import {
+import { ColorProps } from './color.ts'
+import { mergeProps } from './props.ts'
+import type {
   RichTextItem,
   RichTexttoHastOpts,
   ColorPropertiesMap,
   RichTexttoHastBuildePropertiesMap
-} from './types.js'
+} from './types.ts'
 
 export type RichTextTextItem = Extract<RichTextItem, { type?: 'text' }>
 
