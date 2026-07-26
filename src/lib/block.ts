@@ -237,6 +237,39 @@ export class BlockHeading3ToHast extends BlockToHastBuilder<'heading_3'> {
   }
 }
 
+export class BlockHeading4ToHast extends BlockToHastBuilder<'heading_4'> {
+  constructor(opts: BlockToHastBuilderOpts = {}) {
+    super('heading_4', opts)
+  }
+  outerTag(): { name: string | null; properties?: Properties } {
+    return { name: null }
+  }
+  async build({
+    block,
+    nest,
+    richTextToHast,
+    colorProps
+  }: BlockToHastBuilderBuildOpts): Promise<Child[]> {
+    if (this.blockType === block.type) {
+      return [
+        h(
+          'h4',
+          mergeProps(
+            this.props('heading-4'),
+            colorProps.props(block[block.type].color)
+          ),
+          ...(await richTextToHast.build(block[block.type].rich_text)),
+          ...nest
+        )
+      ]
+    }
+    return []
+  }
+  isBreak(_prevType: PrevType): boolean {
+    return true
+  }
+}
+
 export class BlockCodeToHast extends BlockToHastBuilder<'code'> {
   constructor(opts: BlockToHastBuilderOpts = {}) {
     super('code', opts)
@@ -757,6 +790,7 @@ export class SurroundElement {
       heading_1: new BlockHeading1ToHast(opts),
       heading_2: new BlockHeading2ToHast(opts),
       heading_3: new BlockHeading3ToHast(opts),
+      heading_4: new BlockHeading4ToHast(opts),
       code: new BlockCodeToHast(opts),
       callout: new BlockCalloutToHast(opts),
       divider: new BlockDividerToHast(opts),
