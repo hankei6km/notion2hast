@@ -7,7 +7,7 @@
 ## Installtion
 
 ```console
-$ npm install --save notion2hast
+npm install --save notion2hast
 ```
 
 ## Security
@@ -235,6 +235,7 @@ const client = new FromNotion({
 - [x] heading_1
 - [x] heading_2
 - [x] heading_3
+- [x] heading_4
 - [x] bulleted_list_item
 - [x] numbered_list_item
 - [x] quote
@@ -311,6 +312,7 @@ const client = new FromNotion({
 - `heading-1`
 - `heading-2`
 - `heading-3`
+- `heading-4`
 - `code`
 - `code-pre`
 - `code-code`
