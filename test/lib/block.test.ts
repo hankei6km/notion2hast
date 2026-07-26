@@ -12,6 +12,7 @@ import {
   BlockHeading1ToHast,
   BlockHeading2ToHast,
   BlockHeading3ToHast,
+  BlockHeading4ToHast,
   BlockImageToHast,
   BlockItem,
   BlockNumberedListItemToHast,
@@ -419,6 +420,81 @@ describe('BlockToHastBuilder class', () => {
         colorProps: new ColorProps({})
       }),
       [h('h3', { className: 'foo', style: 'color:#9B9A97' }, ...['test1'])]
+    )
+  })
+
+  it('should build hast as BlockHeading4ToHast', async () => {
+    const b = new BlockHeading4ToHast()
+
+    assert.deepStrictEqual(b.outerTag(), { name: null })
+
+    assert.deepStrictEqual(
+      await b.build({
+        block: getMockBlock('heading_4', {
+          color: 'default',
+          rich_text: [getMockRichTextItem('test1')]
+        }),
+        nest: [],
+        parent: undefined,
+        index: 0,
+        richTextToHast: new RichTextToHast(),
+        colorProps: new ColorProps({})
+      }),
+      [h('h4', {}, ...['test1'])]
+    )
+    assert.deepStrictEqual(
+      await b.build({
+        block: getMockBlock('heading_4', {
+          color: 'gray',
+          rich_text: [getMockRichTextItem('test1')]
+        }),
+        nest: [],
+        parent: undefined,
+        index: 0,
+        richTextToHast: new RichTextToHast(),
+        colorProps: new ColorProps({})
+      }),
+      [h('h4', { style: 'color:#9B9A97' }, ...['test1'])]
+    )
+    assert.deepStrictEqual(
+      await b.build({
+        block: getMockBlock('other', {
+          rich_text: [getMockRichTextItem('test1')]
+        }),
+        nest: [],
+        parent: undefined,
+        index: 0,
+        richTextToHast: new RichTextToHast(),
+        colorProps: new ColorProps({})
+      }),
+      []
+    )
+
+    assert.strictEqual(b.isBreak(''), true)
+    assert.strictEqual(b.isBreak('heading_4'), true)
+    assert.strictEqual(b.isBreak('other' as any), true)
+  })
+
+  it('should build hast as BlockHeading4ToHast(props)', async () => {
+    const b = new BlockHeading4ToHast({
+      propertiesMap: { 'heading-4': { className: 'foo' } }
+    })
+
+    assert.deepStrictEqual(b.outerTag(), { name: null })
+
+    assert.deepStrictEqual(
+      await b.build({
+        block: getMockBlock('heading_4', {
+          color: 'gray',
+          rich_text: [getMockRichTextItem('test1')]
+        }),
+        nest: [],
+        parent: undefined,
+        index: 0,
+        richTextToHast: new RichTextToHast(),
+        colorProps: new ColorProps({})
+      }),
+      [h('h4', { className: 'foo', style: 'color:#9B9A97' }, ...['test1'])]
     )
   })
 
@@ -2008,6 +2084,20 @@ describe('SurroundElement class', () => {
 
     surround.reset()
     await surround.append({
+      block: getMockBlock('heading_4', {
+        color: 'default',
+        rich_text: [getMockRichTextItem('test1')]
+      }),
+      nest: [],
+      parent: undefined,
+      index: 0,
+      richTextToHast: new RichTextToHast(),
+      colorProps: new ColorProps({})
+    })
+    assert.deepStrictEqual(surround.content(), [h('h4', {}, ...['test1'])])
+
+    surround.reset()
+    await surround.append({
       block: getMockBlock('code', {
         language: 'javascript',
         rich_text: [getMockRichTextItem('test1')],
@@ -2250,6 +2340,15 @@ describe('SurroundElement class', () => {
     assert.deepStrictEqual(surround.outerTag(), { name: null })
     await surround.append({
       block: getMockBlock('heading_3'),
+      nest: [],
+      parent: undefined,
+      index: 0,
+      richTextToHast: new RichTextToHast(),
+      colorProps: new ColorProps({})
+    })
+    assert.deepStrictEqual(surround.outerTag(), { name: null })
+    await surround.append({
+      block: getMockBlock('heading_4'),
       nest: [],
       parent: undefined,
       index: 0,
