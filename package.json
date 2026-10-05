@@ -29,8 +29,7 @@
     "notion2hast": "dist/main.js"
   },
   "scripts": {
-    "start": "npm run build && node dist/main.js",
-    "start:ts": "node src/main.ts",
+    "start": "node src/main.ts",
     "prebuild": "npm run clean",
     "build": "tsc -p tsconfig.build.json",
     "test": "node --experimental-test-module-mocks --test",
