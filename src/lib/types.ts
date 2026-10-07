@@ -103,3 +103,11 @@ export type RichTexttoHastOpts = {
   defaultClassName?: boolean
   richTexttoHastBuilderOpts?: RichTexttoHastBuilderOpts
 }
+
+export class CyclicChainError extends Error {
+  constructor(blockId?: string) {
+    const message = `Cyclic chain detected at block: ${blockId ?? 'unknown'}`
+    super(message)
+    this.name = 'CyclicChainError'
+  }
+}

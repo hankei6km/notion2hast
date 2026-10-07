@@ -1,6 +1,6 @@
 import { h } from 'hastscript'
 import type { Child } from 'hastscript'
-import type { ToHastOpts } from './types.ts'
+import { CyclicChainError, type Block, type ToHastOpts } from './types.ts'
 import { Client } from './client.ts'
 import { BlockItem, SurroundElement } from './block.ts'
 import { RichTextToHast } from './richtext.ts'
@@ -9,7 +9,8 @@ import { ColorProps } from './color.ts'
 export async function blockToHast(
   client: Client,
   opts: ToHastOpts,
-  depth: number = 0
+  depth: number = 0,
+  parents: Block[] = []
 ): Promise<Child> {
   const colorProps = new ColorProps({
     ...opts.colorPropsOpts
@@ -29,10 +30,18 @@ export async function blockToHast(
     while (i !== null && !surround.isBreak(i.type)) {
       const nest: Child = []
       if (i.has_children) {
+        const blockId = i.id
+        if (
+          blockId === opts.block_id ||
+          parents.some((parent) => parent.id === blockId)
+        ) {
+          throw new CyclicChainError(blockId)
+        }
         const a = await blockToHast(
           client,
           Object.assign({}, opts, { block_id: i.id, parent: i }),
-          depth + 1
+          depth + 1,
+          [...parents, i]
         )
         // surround.nest(a)
         if (Array.isArray(a)) {
