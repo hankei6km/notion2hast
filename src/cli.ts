@@ -38,11 +38,16 @@ export const cli = async ({
     const client = new CliClient({
       auth: apiKey
     })
-    const tree = await blockToHast(client, {
-      block_id: blockId,
-      blocktoHastOpts: { defaultClassName },
-      richTexttoHastOpts: { defaultClassName }
-    })
+    const tree = await blockToHast(
+      client,
+      {
+        block_id: blockId,
+        blocktoHastOpts: { defaultClassName },
+        richTexttoHastOpts: { defaultClassName }
+      },
+      0,
+      []
+    )
     if (toHtml) {
       if (
         tree !== undefined &&
