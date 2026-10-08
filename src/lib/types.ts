@@ -1,4 +1,4 @@
-import { Client } from '@notionhq/client'
+import { Client, type RichTextItemResponse } from '@notionhq/client'
 import type { Child, Properties } from 'hastscript'
 import { BlockToHastBuilder } from './block.ts'
 
@@ -80,10 +80,7 @@ export type BlockToHastBuilders = Record<
   BlockToHastBuilder<Block['type']>
 >
 
-export type RichTextItem = Extract<
-  Block,
-  { type: 'paragraph' } // 共通のようなのでとりあえず paragraph から抜きただす
->['paragraph']['rich_text'][0]
+export type RichTextItem = RichTextItemResponse
 
 export type BlockToHastOpts = {
   defaultClassName?: boolean
