@@ -9,8 +9,6 @@ import type {
   RichTexttoHastBuildePropertiesMap
 } from './types.ts'
 
-export type RichTextTextItem = Extract<RichTextItem, { type?: 'text' }>
-
 export function colorText(richTextColor: string): [string, string] {
   const colors = richTextColor.split('_', 2)
   if (colors.length > 1) {
@@ -40,7 +38,7 @@ export class RichTextToHast {
     }
     return ret
   }
-  textToHast(text: RichTextTextItem): Child {
+  textToHast(text: RichTextItem): Child {
     let tag: { name: string; properties: Properties }[] = []
     const value = text.plain_text
     if (text.href) {
