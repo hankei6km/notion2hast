@@ -15,122 +15,126 @@ describe('colorText()', () => {
   })
 })
 
-describe('RichTexttoHast.textToHast()', () => {
-  it('should hsat from rich_text(basic)', () => {
+describe('RichTexttoHast.build() - textToHast', () => {
+  it('should hast from rich_text(basic)', async () => {
     const r = new RichTextToHast({})
-    assert.strictEqual(r.textToHast(getMockRichTextItem('test1')), 'test1')
+    assert.deepStrictEqual(await r.build([getMockRichTextItem('test1')]), [
+      'test1'
+    ])
   })
-  it('should hsat from rich_text(link)', async () => {
+  it('should hast from rich_text(link)', async () => {
     const r = new RichTextToHast({})
     assert.deepStrictEqual(
-      r.textToHast(
+      await r.build([
         getMockRichTextItem('test1', { href: 'https://www.notion.so/' })
-      ),
-      h('a', { href: 'https://www.notion.so/' }, ['test1'])
+      ]),
+      [h('a', { href: 'https://www.notion.so/' }, ['test1'])]
     )
   })
-  it('should hsat from rich_text array(annotaions)', async () => {
+  it('should hast from rich_text array(annotaions)', async () => {
     const r = new RichTextToHast({})
     assert.deepStrictEqual(
-      r.textToHast(
+      await r.build([
         getMockRichTextItem('test1', { annotations: { bold: true } })
-      ),
-      h('strong', {}, ['test1'])
+      ]),
+      [h('strong', {}, ['test1'])]
     )
     assert.deepStrictEqual(
-      r.textToHast(
+      await r.build([
         getMockRichTextItem('test1', { annotations: { code: true } })
-      ),
-      h('code', {}, ['test1'])
+      ]),
+      [h('code', {}, ['test1'])]
     )
     assert.deepStrictEqual(
-      r.textToHast(
+      await r.build([
         getMockRichTextItem('test1', { annotations: { italic: true } })
-      ),
-      h('em', {}, ['test1'])
+      ]),
+      [h('em', {}, ['test1'])]
     )
     assert.deepStrictEqual(
-      r.textToHast(
+      await r.build([
         getMockRichTextItem('test1', { annotations: { strikethrough: true } })
-      ),
-      h('s', {}, ['test1'])
+      ]),
+      [h('s', {}, ['test1'])]
     )
     assert.deepStrictEqual(
-      r.textToHast(
+      await r.build([
         getMockRichTextItem('test1', { annotations: { underline: true } })
-      ),
-      h('span', { style: 'text-decoration: underline;' }, ['test1'])
+      ]),
+      [h('span', { style: 'text-decoration: underline;' }, ['test1'])]
     )
     assert.deepStrictEqual(
-      r.textToHast(
+      await r.build([
         getMockRichTextItem('test1', { annotations: { color: 'gray' } })
-      ),
-      h('span', { style: 'color:#9B9A97' }, ['test1'])
+      ]),
+      [h('span', { style: 'color:#9B9A97' }, ['test1'])]
     )
     assert.deepStrictEqual(
-      r.textToHast(
+      await r.build([
         getMockRichTextItem('test1', { annotations: { color: 'foo' } })
-      ),
-      h('span', {}, ['test1'])
+      ]),
+      [h('span', {}, ['test1'])]
     )
     assert.deepStrictEqual(
-      r.textToHast(
+      await r.build([
         getMockRichTextItem('test1', {
           annotations: { color: 'gray_background' }
         })
-      ),
-      h('span', { style: 'background-color:#EBECED' }, ['test1'])
+      ]),
+      [h('span', { style: 'background-color:#EBECED' }, ['test1'])]
     )
     assert.deepStrictEqual(
-      r.textToHast(
+      await r.build([
         getMockRichTextItem('test1', {
           annotations: { color: 'foo_background' }
         })
-      ),
-      h('span', {}, ['test1'])
+      ]),
+      [h('span', {}, ['test1'])]
     )
   })
-  it('should hsat from rich_text array(annotaions with default class name)', async () => {
+  it('should hast from rich_text array(annotaions with default class name)', async () => {
     const r = new RichTextToHast({ defaultClassName: true })
     assert.deepStrictEqual(
-      r.textToHast(
+      await r.build([
         getMockRichTextItem('test1', { annotations: { bold: true } })
-      ),
-      h('strong', { className: 'text-bold' }, ['test1'])
+      ]),
+      [h('strong', { className: 'text-bold' }, ['test1'])]
     )
     assert.deepStrictEqual(
-      r.textToHast(
+      await r.build([
         getMockRichTextItem('test1', { annotations: { code: true } })
-      ),
-      h('code', { className: 'text-code' }, ['test1'])
+      ]),
+      [h('code', { className: 'text-code' }, ['test1'])]
     )
     assert.deepStrictEqual(
-      r.textToHast(
+      await r.build([
         getMockRichTextItem('test1', { annotations: { italic: true } })
-      ),
-      h('em', { className: 'text-italic' }, ['test1'])
+      ]),
+      [h('em', { className: 'text-italic' }, ['test1'])]
     )
     assert.deepStrictEqual(
-      r.textToHast(
+      await r.build([
         getMockRichTextItem('test1', { annotations: { strikethrough: true } })
-      ),
-      h('s', { className: 'text-strikethrough' }, ['test1'])
+      ]),
+      [h('s', { className: 'text-strikethrough' }, ['test1'])]
     )
     assert.deepStrictEqual(
-      r.textToHast(
+      await r.build([
         getMockRichTextItem('test1', { annotations: { underline: true } })
-      ),
-      h(
-        'span',
-        {
-          style: 'text-decoration: underline;',
-          className: 'text-underline'
-        },
-        ['test1']
-      )
+      ]),
+      [
+        h(
+          'span',
+          {
+            style: 'text-decoration: underline;',
+            className: 'text-underline'
+          },
+          ['test1']
+        )
+      ]
     )
   })
-  it('should hsat from rich_text(link with properties map)', async () => {
+  it('should hast from rich_text(link with properties map)', async () => {
     const r = new RichTextToHast({
       richTexttoHastBuilderOpts: {
         richTexttoHastBuildePropertiesMap: {
@@ -139,15 +143,17 @@ describe('RichTexttoHast.textToHast()', () => {
       }
     })
     assert.deepStrictEqual(
-      r.textToHast(
+      await r.build([
         getMockRichTextItem('test1', { href: 'https://www.notion.so/' })
-      ),
-      h('a', { className: 'a-class', href: 'https://www.notion.so/' }, [
-        'test1'
-      ])
+      ]),
+      [
+        h('a', { className: 'a-class', href: 'https://www.notion.so/' }, [
+          'test1'
+        ])
+      ]
     )
   })
-  it('should hsat from rich_text array(annotaions with properties map)', async () => {
+  it('should hast from rich_text array(annotaions with properties map)', async () => {
     const r = new RichTextToHast({
       richTexttoHastBuilderOpts: {
         richTexttoHastBuildePropertiesMap: {
@@ -160,47 +166,49 @@ describe('RichTexttoHast.textToHast()', () => {
       }
     })
     assert.deepStrictEqual(
-      r.textToHast(
+      await r.build([
         getMockRichTextItem('test1', { annotations: { bold: true } })
-      ),
-      h('strong', { className: 'b-class' }, ['test1'])
+      ]),
+      [h('strong', { className: 'b-class' }, ['test1'])]
     )
     assert.deepStrictEqual(
-      r.textToHast(
+      await r.build([
         getMockRichTextItem('test1', { annotations: { code: true } })
-      ),
-      h('code', { className: 'code-class' }, ['test1'])
+      ]),
+      [h('code', { className: 'code-class' }, ['test1'])]
     )
     assert.deepStrictEqual(
-      r.textToHast(
+      await r.build([
         getMockRichTextItem('test1', { annotations: { italic: true } })
-      ),
-      h('em', { className: 'em-class' }, ['test1'])
+      ]),
+      [h('em', { className: 'em-class' }, ['test1'])]
     )
     assert.deepStrictEqual(
-      r.textToHast(
+      await r.build([
         getMockRichTextItem('test1', { annotations: { strikethrough: true } })
-      ),
-      h('s', { className: 's-class' }, ['test1'])
+      ]),
+      [h('s', { className: 's-class' }, ['test1'])]
     )
     assert.deepStrictEqual(
-      r.textToHast(
+      await r.build([
         getMockRichTextItem('test1', { annotations: { underline: true } })
-      ),
-      h('span', { className: 'underline-class' }, ['test1'])
+      ]),
+      [h('span', { className: 'underline-class' }, ['test1'])]
     )
     assert.deepStrictEqual(
-      r.textToHast(
+      await r.build([
         getMockRichTextItem('test1', {
           annotations: { underline: true, color: 'gray' }
         })
-      ),
-      h('span', { className: 'underline-class', style: 'color:#9B9A97' }, [
-        'test1'
-      ])
+      ]),
+      [
+        h('span', { className: 'underline-class', style: 'color:#9B9A97' }, [
+          'test1'
+        ])
+      ]
     )
   })
-  it('should hsat from rich_text array(annotaions with color map)', async () => {
+  it('should hast from rich_text array(annotaions with color map)', async () => {
     const r = new RichTextToHast(
       {
         richTexttoHastBuilderOpts: {
@@ -212,18 +220,22 @@ describe('RichTexttoHast.textToHast()', () => {
       new ColorProps({ colorPropertiesMap: { gray: { style: 'color:red' } } })
     )
     assert.deepStrictEqual(
-      r.textToHast(
+      await r.build([
         getMockRichTextItem('test1', {
           annotations: { underline: true, color: 'gray' }
         })
-      ),
-      h('span', { className: 'underline-class', style: 'color:red' }, ['test1'])
+      ]),
+      [
+        h('span', { className: 'underline-class', style: 'color:red' }, [
+          'test1'
+        ])
+      ]
     )
   })
-  it('should hsat from rich_text array(annotaions mix)', () => {
+  it('should hast from rich_text array(annotaions mix)', async () => {
     const r = new RichTextToHast({})
     assert.deepStrictEqual(
-      r.textToHast(
+      await r.build([
         getMockRichTextItem('test1', {
           annotations: {
             bold: true,
@@ -234,30 +246,32 @@ describe('RichTexttoHast.textToHast()', () => {
             color: 'gray'
           }
         })
-      ),
-      h('code', {}, [
-        h('strong', {}, [
-          h('em', {}, [
-            h(
-              's',
-              {},
+      ]),
+      [
+        h('code', {}, [
+          h('strong', {}, [
+            h('em', {}, [
               h(
-                'span',
-                {
-                  style: 'text-decoration: underline;color:#9B9A97'
-                },
-                ['test1']
+                's',
+                {},
+                h(
+                  'span',
+                  {
+                    style: 'text-decoration: underline;color:#9B9A97'
+                  },
+                  ['test1']
+                )
               )
-            )
+            ])
           ])
         ])
-      ])
+      ]
     )
   })
-  it('should hsat from rich_text array(href and annotaions)', () => {
+  it('should hast from rich_text array(href and annotaions)', async () => {
     const r = new RichTextToHast({})
     assert.deepStrictEqual(
-      r.textToHast(
+      await r.build([
         getMockRichTextItem('test1', {
           annotations: {
             bold: true,
@@ -269,38 +283,40 @@ describe('RichTexttoHast.textToHast()', () => {
           },
           href: 'https://www.notion.so/'
         })
-      ),
-      h(
-        'a',
-        {
-          href: 'https://www.notion.so/'
-        },
-        [
-          h('code', {}, [
-            h('strong', {}, [
-              h('em', {}, [
-                h(
-                  's',
-                  {},
+      ]),
+      [
+        h(
+          'a',
+          {
+            href: 'https://www.notion.so/'
+          },
+          [
+            h('code', {}, [
+              h('strong', {}, [
+                h('em', {}, [
                   h(
-                    'span',
-                    {
-                      style: 'text-decoration: underline;color:#9B9A97'
-                    },
-                    ['test1']
+                    's',
+                    {},
+                    h(
+                      'span',
+                      {
+                        style: 'text-decoration: underline;color:#9B9A97'
+                      },
+                      ['test1']
+                    )
                   )
-                )
+                ])
               ])
             ])
-          ])
-        ]
-      )
+          ]
+        )
+      ]
     )
   })
 })
 
 describe('RichTexttoHast.build()', () => {
-  it('should hsat from rich_text array(basic)', async () => {
+  it('should hast from rich_text array(basic)', async () => {
     const r = new RichTextToHast({})
     assert.deepStrictEqual(await r.build([getMockRichTextItem('test1')]), [
       'test1'

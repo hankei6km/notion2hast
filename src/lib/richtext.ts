@@ -6,7 +6,9 @@ import type {
   RichTextItem,
   RichTexttoHastOpts,
   ColorPropertiesMap,
-  RichTexttoHastBuildePropertiesMap
+  RichTexttoHastBuildePropertiesMap,
+  ToHastOpts,
+  Block
 } from './types.ts'
 
 export function colorText(richTextColor: string): [string, string] {
@@ -38,7 +40,7 @@ export class RichTextToHast {
     }
     return ret
   }
-  textToHast(text: RichTextItem): Child {
+  protected textToHast(text: RichTextItem): Child {
     let tag: { name: string; properties: Properties }[] = []
     const value = text.plain_text
     if (text.href) {
@@ -93,11 +95,28 @@ export class RichTextToHast {
     }
     return nest
   }
-  async build(richTextItems: RichTextItem[]): Promise<Child[]> {
+  protected equationToHast(text: RichTextItem): Child {
+    // とりあえず空を返す
+    return ''
+  }
+  protected mentionToHast(text: RichTextItem): Child {
+    // とりあえず空を返す
+    return ''
+  }
+  async build(
+    richTextItems: RichTextItem[]
+    //opts: ToHastOpts,
+    //depth: number = 0,
+    //parents: Block[] = []
+  ): Promise<Child[]> {
     const ret: Child[] = []
     for (const item of richTextItems) {
       if (item.type === 'text') {
         ret.push(this.textToHast(item))
+      } else if (item.type === 'equation') {
+        ret.push(this.equationToHast(item))
+      } else if (item.type === 'mention') {
+        ret.push(this.mentionToHast(item))
       }
     }
     return ret
