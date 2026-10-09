@@ -1,9 +1,11 @@
 import { RichTextToHast } from '../src/lib/richtext.ts'
+import type { RichTextItem } from '../src/lib/types.ts'
 
 export function getMockRichTextItem(
   text: string,
   opts: Record<string, any> = {}
-): Parameters<RichTextToHast['textToHast']>[0] {
+): RichTextItem {
+  //): Parameters<RichTextToHast['build']>[0] {
   const { text: textObj, annotaions, ...others } = opts
   return Object.assign(
     {
