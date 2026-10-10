@@ -8,7 +8,8 @@ import type {
   ColorPropertiesMap,
   RichTexttoHastBuildePropertiesMap,
   ToHastOpts,
-  Block
+  Block,
+  BlockToHastBuilderBuildOpts
 } from './types.ts'
 
 export function colorText(richTextColor: string): [string, string] {
@@ -19,6 +20,15 @@ export function colorText(richTextColor: string): [string, string] {
   return [richTextColor, '']
 }
 
+type RichTextToHastBuildOpts = {
+  block: Block
+  nest: Child[]
+  index: number
+  depth: number
+  parents: Block[]
+  opts: ToHastOpts
+  colorProps: ColorProps
+}
 export class RichTextToHast {
   protected colorProps: ColorProps
   protected defaultClassName: boolean
@@ -104,10 +114,8 @@ export class RichTextToHast {
     return ''
   }
   async build(
-    richTextItems: RichTextItem[]
-    //opts: ToHastOpts,
-    //depth: number = 0,
-    //parents: Block[] = []
+    richTextItems: RichTextItem[],
+    opts: BlockToHastBuilderBuildOpts
   ): Promise<Child[]> {
     const ret: Child[] = []
     for (const item of richTextItems) {
