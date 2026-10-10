@@ -3,6 +3,7 @@ import type { Child, Properties } from 'hastscript'
 import { classnames } from 'hast-util-classnames'
 import type {
   Block,
+  BlockToHastBuilderBuildOpts,
   BlockToHastBuilderOpts,
   BlockToHastBuilderPropertiesKey,
   BlockToHastBuilderPropertiesMap,
@@ -74,14 +75,6 @@ export class BlockItem {
   }
 }
 
-type BlockToHastBuilderBuildOpts = {
-  block: Block
-  nest: Child[]
-  parent?: Block
-  index: number
-  richTextToHast: RichTextToHast
-  colorProps: ColorProps
-}
 export abstract class BlockToHastBuilder<T> {
   protected blockType!: T
   protected defaultClassname: boolean
@@ -112,22 +105,20 @@ export class BlockParagraphToHast extends BlockToHastBuilder<'paragraph'> {
   outerTag(): { name: string | null; properties?: Properties } {
     return { name: null }
   }
-  async build({
-    block,
-    nest,
-    richTextToHast,
-    colorProps
-  }: BlockToHastBuilderBuildOpts): Promise<Child[]> {
-    if (this.blockType === block.type) {
+  async build(opts: BlockToHastBuilderBuildOpts): Promise<Child[]> {
+    if (this.blockType === opts.block.type) {
       return [
         h(
           'p',
           mergeProps(
             this.props('paragraph'),
-            colorProps.props(block[block.type].color)
+            opts.colorProps.props(opts.block[opts.block.type].color)
           ),
-          ...(await richTextToHast.build(block[block.type].rich_text)),
-          ...nest
+          ...(await opts.richTextToHast.build(
+            opts.block[opts.block.type].rich_text,
+            opts
+          )),
+          ...opts.nest
         )
       ]
     }
@@ -145,22 +136,20 @@ export class BlockHeading1ToHast extends BlockToHastBuilder<'heading_1'> {
   outerTag(): { name: string | null; properties?: Properties } {
     return { name: null }
   }
-  async build({
-    block,
-    nest,
-    richTextToHast,
-    colorProps
-  }: BlockToHastBuilderBuildOpts): Promise<Child[]> {
-    if (this.blockType === block.type) {
+  async build(opts: BlockToHastBuilderBuildOpts): Promise<Child[]> {
+    if (this.blockType === opts.block.type) {
       return [
         h(
           'h1',
           mergeProps(
             this.props('heading-1'),
-            colorProps.props(block[block.type].color)
+            opts.colorProps.props(opts.block[opts.block.type].color)
           ),
-          ...(await richTextToHast.build(block[block.type].rich_text)),
-          ...nest
+          ...(await opts.richTextToHast.build(
+            opts.block[opts.block.type].rich_text,
+            opts
+          )),
+          ...opts.nest
         )
       ]
     }
@@ -178,22 +167,20 @@ export class BlockHeading2ToHast extends BlockToHastBuilder<'heading_2'> {
   outerTag(): { name: string | null; properties?: Properties } {
     return { name: null }
   }
-  async build({
-    block,
-    nest,
-    richTextToHast,
-    colorProps
-  }: BlockToHastBuilderBuildOpts): Promise<Child[]> {
-    if (this.blockType === block.type) {
+  async build(opts: BlockToHastBuilderBuildOpts): Promise<Child[]> {
+    if (this.blockType === opts.block.type) {
       return [
         h(
           'h2',
           mergeProps(
             this.props('heading-2'),
-            colorProps.props(block[block.type].color)
+            opts.colorProps.props(opts.block[opts.block.type].color)
           ),
-          ...(await richTextToHast.build(block[block.type].rich_text)),
-          ...nest
+          ...(await opts.richTextToHast.build(
+            opts.block[opts.block.type].rich_text,
+            opts
+          )),
+          ...opts.nest
         )
       ]
     }
@@ -211,22 +198,20 @@ export class BlockHeading3ToHast extends BlockToHastBuilder<'heading_3'> {
   outerTag(): { name: string | null; properties?: Properties } {
     return { name: null }
   }
-  async build({
-    block,
-    nest,
-    richTextToHast,
-    colorProps
-  }: BlockToHastBuilderBuildOpts): Promise<Child[]> {
-    if (this.blockType === block.type) {
+  async build(opts: BlockToHastBuilderBuildOpts): Promise<Child[]> {
+    if (this.blockType === opts.block.type) {
       return [
         h(
           'h3',
           mergeProps(
             this.props('heading-3'),
-            colorProps.props(block[block.type].color)
+            opts.colorProps.props(opts.block[opts.block.type].color)
           ),
-          ...(await richTextToHast.build(block[block.type].rich_text)),
-          ...nest
+          ...(await opts.richTextToHast.build(
+            opts.block[opts.block.type].rich_text,
+            opts
+          )),
+          ...opts.nest
         )
       ]
     }
@@ -244,22 +229,20 @@ export class BlockHeading4ToHast extends BlockToHastBuilder<'heading_4'> {
   outerTag(): { name: string | null; properties?: Properties } {
     return { name: null }
   }
-  async build({
-    block,
-    nest,
-    richTextToHast,
-    colorProps
-  }: BlockToHastBuilderBuildOpts): Promise<Child[]> {
-    if (this.blockType === block.type) {
+  async build(opts: BlockToHastBuilderBuildOpts): Promise<Child[]> {
+    if (this.blockType === opts.block.type) {
       return [
         h(
           'h4',
           mergeProps(
             this.props('heading-4'),
-            colorProps.props(block[block.type].color)
+            opts.colorProps.props(opts.block[opts.block.type].color)
           ),
-          ...(await richTextToHast.build(block[block.type].rich_text)),
-          ...nest
+          ...(await opts.richTextToHast.build(
+            opts.block[opts.block.type].rich_text,
+            opts
+          )),
+          ...opts.nest
         )
       ]
     }
@@ -277,21 +260,23 @@ export class BlockCodeToHast extends BlockToHastBuilder<'code'> {
   outerTag(): { name: string | null; properties?: Properties } {
     return { name: null }
   }
-  async build({
-    block,
-    nest,
-    richTextToHast
-  }: BlockToHastBuilderBuildOpts): Promise<Child[]> {
-    if (this.blockType === block.type) {
-      const lang = block[block.type].language || ''
+  async build(opts: BlockToHastBuilderBuildOpts): Promise<Child[]> {
+    if (this.blockType === opts.block.type) {
+      const lang = opts.block[opts.block.type].language || ''
       const codeCode = h(
         'code',
         this.props('code-code'),
-        ...(await richTextToHast.build(block[block.type].rich_text))
+        ...(await opts.richTextToHast.build(
+          opts.block[opts.block.type].rich_text,
+          opts
+        ))
       )
       classnames(codeCode, lang)
-      const caption = await richTextToHast.build(block[block.type].caption)
-      const codeCaptin: Child =
+      const caption = await opts.richTextToHast.build(
+        opts.block[opts.block.type].caption,
+        opts
+      )
+      const codeCaption: Child =
         caption.length > 0
           ? h('figcaption', this.props('code-caption'), ...caption)
           : null
@@ -300,8 +285,8 @@ export class BlockCodeToHast extends BlockToHastBuilder<'code'> {
           'figure',
           this.props('code'),
           h('pre', this.props('code-pre'), codeCode),
-          codeCaptin,
-          ...nest
+          codeCaption,
+          ...opts.nest
         )
       ]
     }
@@ -319,14 +304,9 @@ export class BlockCalloutToHast extends BlockToHastBuilder<'callout'> {
   outerTag(): { name: string | null; properties?: Properties } {
     return { name: null }
   }
-  async build({
-    block,
-    nest,
-    richTextToHast,
-    colorProps
-  }: BlockToHastBuilderBuildOpts): Promise<Child[]> {
-    if (this.blockType === block.type) {
-      const iconSrc = block[block.type].icon
+  async build(opts: BlockToHastBuilderBuildOpts): Promise<Child[]> {
+    if (this.blockType === opts.block.type) {
+      const iconSrc = opts.block[opts.block.type].icon
       let icon: Child = ''
       if (iconSrc?.type === 'emoji') {
         icon = h('div', this.props('callout-icon-emoji'), iconSrc.emoji)
@@ -348,7 +328,7 @@ export class BlockCalloutToHast extends BlockToHastBuilder<'callout'> {
           'div',
           mergeProps(
             this.props('callout'),
-            colorProps.props(block[block.type].color)
+            opts.colorProps.props(opts.block[opts.block.type].color)
           ),
           icon,
           h(
@@ -357,10 +337,13 @@ export class BlockCalloutToHast extends BlockToHastBuilder<'callout'> {
             h(
               'p',
               {},
-              ...(await richTextToHast.build(block[block.type].rich_text))
+              ...(await opts.richTextToHast.build(
+                opts.block[opts.block.type].rich_text,
+                opts
+              ))
             )
           ),
-          ...nest
+          ...opts.nest
         )
       ]
     }
@@ -378,9 +361,9 @@ export class BlockDividerToHast extends BlockToHastBuilder<'divider'> {
   outerTag(): { name: string | null; properties?: Properties } {
     return { name: null }
   }
-  async build({ block, nest }: BlockToHastBuilderBuildOpts): Promise<Child[]> {
-    if (this.blockType === block.type) {
-      return [h('hr', this.props('divider'), ...nest)]
+  async build(opts: BlockToHastBuilderBuildOpts): Promise<Child[]> {
+    if (this.blockType === opts.block.type) {
+      return [h('hr', this.props('divider'), ...opts.nest)]
     }
     return []
   }
@@ -396,13 +379,9 @@ export class BlockColumnListToHast extends BlockToHastBuilder<'column_list'> {
   outerTag(): { name: string | null; properties?: Properties } {
     return { name: null }
   }
-  async build({
-    block,
-    nest,
-    richTextToHast
-  }: BlockToHastBuilderBuildOpts): Promise<Child[]> {
-    if (this.blockType === block.type) {
-      return [h('div', this.props('column-list'), ...nest)]
+  async build(opts: BlockToHastBuilderBuildOpts): Promise<Child[]> {
+    if (this.blockType === opts.block.type) {
+      return [h('div', this.props('column-list'), ...opts.nest)]
     }
     return []
   }
@@ -418,13 +397,9 @@ export class BlockColumnToHast extends BlockToHastBuilder<'column'> {
   outerTag(): { name: string | null; properties?: Properties } {
     return { name: null }
   }
-  async build({
-    block,
-    nest,
-    richTextToHast
-  }: BlockToHastBuilderBuildOpts): Promise<Child[]> {
-    if (this.blockType === block.type) {
-      return [h('div', this.props('column'), ...nest)]
+  async build(opts: BlockToHastBuilderBuildOpts): Promise<Child[]> {
+    if (this.blockType === opts.block.type) {
+      return [h('div', this.props('column'), ...opts.nest)]
     }
     return []
   }
@@ -440,22 +415,20 @@ export class BlockBulletedListItemToHast extends BlockToHastBuilder<'bulleted_li
   outerTag(): { name: string | null; properties?: Properties } {
     return { name: 'ul', properties: this.props('bulleted-list') }
   }
-  async build({
-    block,
-    nest,
-    richTextToHast,
-    colorProps
-  }: BlockToHastBuilderBuildOpts): Promise<Child[]> {
-    if (this.blockType === block.type) {
+  async build(opts: BlockToHastBuilderBuildOpts): Promise<Child[]> {
+    if (this.blockType === opts.block.type) {
       return [
         h(
           'li',
           mergeProps(
             this.props('bulleted-list-item'),
-            colorProps.props(block[block.type].color)
+            opts.colorProps.props(opts.block[opts.block.type].color)
           ),
-          ...(await richTextToHast.build(block[block.type].rich_text)),
-          ...nest
+          ...(await opts.richTextToHast.build(
+            opts.block[opts.block.type].rich_text,
+            opts
+          )),
+          ...opts.nest
         )
       ]
     }
@@ -476,22 +449,20 @@ export class BlockNumberedListItemToHast extends BlockToHastBuilder<'numbered_li
   outerTag(): { name: string | null; properties?: Properties } {
     return { name: 'ol', properties: this.props('numbered-list') }
   }
-  async build({
-    block,
-    nest,
-    richTextToHast,
-    colorProps
-  }: BlockToHastBuilderBuildOpts): Promise<Child[]> {
-    if (this.blockType === block.type) {
+  async build(opts: BlockToHastBuilderBuildOpts): Promise<Child[]> {
+    if (this.blockType === opts.block.type) {
       return [
         h(
           'li',
           mergeProps(
             this.props('numbered-list-item'),
-            colorProps.props(block[block.type].color)
+            opts.colorProps.props(opts.block[opts.block.type].color)
           ),
-          ...(await richTextToHast.build(block[block.type].rich_text)),
-          ...nest
+          ...(await opts.richTextToHast.build(
+            opts.block[opts.block.type].rich_text,
+            opts
+          )),
+          ...opts.nest
         )
       ]
     }
@@ -512,22 +483,20 @@ export class BlockQuoteToHast extends BlockToHastBuilder<'quote'> {
   outerTag(): { name: string | null; properties?: Properties } {
     return { name: null }
   }
-  async build({
-    block,
-    nest,
-    richTextToHast,
-    colorProps
-  }: BlockToHastBuilderBuildOpts): Promise<Child[]> {
-    if (this.blockType === block.type) {
+  async build(opts: BlockToHastBuilderBuildOpts): Promise<Child[]> {
+    if (this.blockType === opts.block.type) {
       return [
         h(
           'blockquote',
           mergeProps(
             this.props('quote'),
-            colorProps.props(block[block.type].color)
+            opts.colorProps.props(opts.block[opts.block.type].color)
           ),
-          ...(await richTextToHast.build(block[block.type].rich_text)),
-          ...nest
+          ...(await opts.richTextToHast.build(
+            opts.block[opts.block.type].rich_text,
+            opts
+          )),
+          ...opts.nest
         )
       ]
     }
@@ -545,18 +514,13 @@ export class BlockTodoToHast extends BlockToHastBuilder<'to_do'> {
   outerTag(): { name: string | null; properties?: Properties } {
     return { name: null }
   }
-  async build({
-    block,
-    nest,
-    richTextToHast,
-    colorProps
-  }: BlockToHastBuilderBuildOpts): Promise<Child[]> {
-    if (this.blockType === block.type) {
-      const todo = block[block.type]
+  async build(opts: BlockToHastBuilderBuildOpts): Promise<Child[]> {
+    if (this.blockType === opts.block.type) {
+      const todo = opts.block[opts.block.type]
       return [
         h(
           'div',
-          mergeProps(this.props('todo'), colorProps.props(todo.color)),
+          mergeProps(this.props('todo'), opts.colorProps.props(todo.color)),
           h(
             'div',
             this.props(todo.checked ? 'todo-checked' : 'todo-not-checked')
@@ -564,9 +528,9 @@ export class BlockTodoToHast extends BlockToHastBuilder<'to_do'> {
           h(
             'div',
             this.props('todo-text'),
-            ...(await richTextToHast.build(todo.rich_text))
+            ...(await opts.richTextToHast.build(todo.rich_text, opts))
           ),
-          ...nest
+          ...opts.nest
         )
       ]
     }
@@ -584,26 +548,24 @@ export class BlockToggleToHast extends BlockToHastBuilder<'toggle'> {
   outerTag(): { name: string | null; properties?: Properties } {
     return { name: null }
   }
-  async build({
-    block,
-    nest,
-    richTextToHast,
-    colorProps
-  }: BlockToHastBuilderBuildOpts): Promise<Child[]> {
-    if (this.blockType === block.type) {
+  async build(opts: BlockToHastBuilderBuildOpts): Promise<Child[]> {
+    if (this.blockType === opts.block.type) {
       return [
         h(
           'details',
           mergeProps(
             this.props('toggle'),
-            colorProps.props(block[block.type].color)
+            opts.colorProps.props(opts.block[opts.block.type].color)
           ),
           h(
             'summary',
             this.props('toggle-summary'),
-            ...(await richTextToHast.build(block[block.type].rich_text))
+            ...(await opts.richTextToHast.build(
+              opts.block[opts.block.type].rich_text,
+              opts
+            ))
           ),
-          ...nest
+          ...opts.nest
         )
       ]
     }
@@ -621,13 +583,9 @@ export class BlockTableToHast extends BlockToHastBuilder<'table'> {
   outerTag(): { name: string | null; properties?: Properties } {
     return { name: null }
   }
-  async build({
-    block,
-    nest,
-    richTextToHast
-  }: BlockToHastBuilderBuildOpts): Promise<Child[]> {
-    if (this.blockType === block.type) {
-      return [h('table', this.props('table'), ...nest)]
+  async build(opts: BlockToHastBuilderBuildOpts): Promise<Child[]> {
+    if (this.blockType === opts.block.type) {
+      return [h('table', this.props('table'), ...opts.nest)]
     }
     return []
   }
@@ -643,27 +601,22 @@ export class BlockTableRowToHast extends BlockToHastBuilder<'table_row'> {
   outerTag(): { name: string | null; properties?: Properties } {
     return { name: null }
   }
-  async build({
-    block,
-    nest,
-    parent,
-    index,
-    richTextToHast
-  }: BlockToHastBuilderBuildOpts): Promise<Child[]> {
-    if (this.blockType === block.type) {
+  async build(opts: BlockToHastBuilderBuildOpts): Promise<Child[]> {
+    if (this.blockType === opts.block.type) {
       let has_column_header: boolean = false
       let has_row_header: boolean = false
+      const parent = opts.parents[opts.parents.length - 1]
       if (parent && parent.type === 'table') {
         has_column_header = parent.table.has_column_header
         has_row_header = parent.table.has_row_header
       }
       const cells: Child[] = []
       let colIdx = 0
-      for (const cell of block[block.type].cells) {
+      for (const cell of opts.block[opts.block.type].cells) {
         let tagName = 'td'
         let properties: Properties = this.props('table-row-cell')
         if (
-          (has_column_header && index === 0) ||
+          (has_column_header && opts.index === 0) ||
           (has_row_header && colIdx === 0)
         ) {
           // index がテーブル行と一致している前提
@@ -671,13 +624,13 @@ export class BlockTableRowToHast extends BlockToHastBuilder<'table_row'> {
         }
         if (tagName === 'th') {
           properties = this.props('table-row-header')
-          if (index === 0 && colIdx === 0) {
+          if (opts.index === 0 && colIdx === 0) {
             properties = Object.assign(
               {},
               properties,
               this.props('table-row-header-top-left')
             )
-          } else if (index === 0) {
+          } else if (opts.index === 0) {
             properties = Object.assign(
               {},
               properties,
@@ -692,11 +645,15 @@ export class BlockTableRowToHast extends BlockToHastBuilder<'table_row'> {
           }
         }
         cells.push(
-          h(tagName, properties, ...(await richTextToHast.build(cell)))
+          h(
+            tagName,
+            properties,
+            ...(await opts.richTextToHast.build(cell, opts))
+          )
         )
         colIdx++
       }
-      return [h('tr', this.props('table-row'), ...cells, ...nest)]
+      return [h('tr', this.props('table-row'), ...cells, ...opts.nest)]
     }
     return []
   }
@@ -712,14 +669,11 @@ export class BlockBookmarkToHast extends BlockToHastBuilder<'bookmark'> {
   outerTag(): { name: string | null; properties?: Properties } {
     return { name: null }
   }
-  async build({
-    block,
-    nest,
-    richTextToHast
-  }: BlockToHastBuilderBuildOpts): Promise<Child[]> {
-    if (this.blockType === block.type) {
-      const caption: Child[] = await richTextToHast.build(
-        block[block.type].caption
+  async build(opts: BlockToHastBuilderBuildOpts): Promise<Child[]> {
+    if (this.blockType === opts.block.type) {
+      const caption: Child[] = await opts.richTextToHast.build(
+        opts.block[opts.block.type].caption,
+        opts
       )
       const bookmarkCaption: Child =
         caption.length > 0
@@ -732,12 +686,12 @@ export class BlockBookmarkToHast extends BlockToHastBuilder<'bookmark'> {
           h(
             'a',
             Object.assign({}, this.props('bookmark-link'), {
-              href: block[block.type].url
+              href: opts.block[opts.block.type].url
             }),
-            block[block.type].url
+            opts.block[opts.block.type].url
           ),
           bookmarkCaption,
-          ...nest
+          ...opts.nest
         )
       ]
     }
@@ -754,22 +708,18 @@ export class BlockImageToHast extends BlockToHastBuilder<'image'> {
   outerTag(): { name: string | null; properties?: Properties } {
     return { name: null }
   }
-  async build({
-    block,
-    nest,
-    richTextToHast
-  }: BlockToHastBuilderBuildOpts): Promise<Child[]> {
-    if (this.blockType === block.type) {
-      const image = block[block.type]
+  async build(opts: BlockToHastBuilderBuildOpts): Promise<Child[]> {
+    if (this.blockType === opts.block.type) {
+      const image = opts.block[opts.block.type]
       let src = image.type === 'external' ? image.external.url : image.file.url
       const children = [
         h('img', Object.assign({}, this.props('image-img'), { src }))
       ]
-      const caption = await richTextToHast.build(image.caption)
+      const caption = await opts.richTextToHast.build(image.caption, opts)
       if (caption.length > 0) {
         children.push(h('figcaption', this.props('image-caption'), ...caption))
       }
-      return [h('figure', this.props('image'), ...children, ...nest)]
+      return [h('figure', this.props('image'), ...children, ...opts.nest)]
     }
     return []
   }
@@ -831,8 +781,10 @@ export class SurroundElement {
   async append({
     block,
     nest,
-    parent,
+    opts,
     index,
+    depth,
+    parents,
     richTextToHast,
     colorProps
   }: BlockToHastBuilderBuildOpts): Promise<void> {
@@ -842,8 +794,10 @@ export class SurroundElement {
         ...(await builder.build({
           block,
           nest,
-          parent,
           index,
+          opts,
+          depth,
+          parents,
           richTextToHast,
           colorProps
         }))

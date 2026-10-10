@@ -1,6 +1,7 @@
 import { describe, it } from 'node:test'
 import assert from 'node:assert/strict'
 import { h } from 'hastscript'
+import type { ToHastOpts } from '../../src/lib/types.ts'
 import {
   BlockBookmarkToHast,
   BlockBulletedListItemToHast,
@@ -28,6 +29,10 @@ import {
 import { ColorProps } from '../../src/lib/color.ts'
 import { RichTextToHast } from '../../src/lib/richtext.ts'
 import { getMockRichTextItem } from '../util.ts'
+
+const getToHastOpts: () => ToHastOpts = () => ({
+  block_id: 'test-id-1'
+})
 
 const getMockBlock = (
   type: string,
@@ -135,8 +140,10 @@ describe('BlockToHastBuilder class', () => {
           rich_text: [getMockRichTextItem('test1')]
         }),
         nest: [],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -149,8 +156,10 @@ describe('BlockToHastBuilder class', () => {
           rich_text: [getMockRichTextItem('test1')]
         }),
         nest: [],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -162,8 +171,10 @@ describe('BlockToHastBuilder class', () => {
           rich_text: [getMockRichTextItem('test1')]
         }),
         nest: [],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -189,8 +200,10 @@ describe('BlockToHastBuilder class', () => {
           rich_text: [getMockRichTextItem('test1')]
         }),
         nest: [],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -210,8 +223,10 @@ describe('BlockToHastBuilder class', () => {
           rich_text: [getMockRichTextItem('test1')]
         }),
         nest: [],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -224,8 +239,10 @@ describe('BlockToHastBuilder class', () => {
           rich_text: [getMockRichTextItem('test1')]
         }),
         nest: [],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -237,8 +254,10 @@ describe('BlockToHastBuilder class', () => {
           rich_text: [getMockRichTextItem('test1')]
         }),
         nest: [],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -264,8 +283,10 @@ describe('BlockToHastBuilder class', () => {
           rich_text: [getMockRichTextItem('test1')]
         }),
         nest: [],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -285,8 +306,10 @@ describe('BlockToHastBuilder class', () => {
           rich_text: [getMockRichTextItem('test1')]
         }),
         nest: [],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -299,8 +322,10 @@ describe('BlockToHastBuilder class', () => {
           rich_text: [getMockRichTextItem('test1')]
         }),
         nest: [],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -312,8 +337,10 @@ describe('BlockToHastBuilder class', () => {
           rich_text: [getMockRichTextItem('test1')]
         }),
         nest: [],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -339,8 +366,10 @@ describe('BlockToHastBuilder class', () => {
           rich_text: [getMockRichTextItem('test1')]
         }),
         nest: [],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -360,8 +389,10 @@ describe('BlockToHastBuilder class', () => {
           rich_text: [getMockRichTextItem('test1')]
         }),
         nest: [],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -374,8 +405,10 @@ describe('BlockToHastBuilder class', () => {
           rich_text: [getMockRichTextItem('test1')]
         }),
         nest: [],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -387,8 +420,10 @@ describe('BlockToHastBuilder class', () => {
           rich_text: [getMockRichTextItem('test1')]
         }),
         nest: [],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -414,8 +449,10 @@ describe('BlockToHastBuilder class', () => {
           rich_text: [getMockRichTextItem('test1')]
         }),
         nest: [],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -435,8 +472,10 @@ describe('BlockToHastBuilder class', () => {
           rich_text: [getMockRichTextItem('test1')]
         }),
         nest: [],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -449,8 +488,10 @@ describe('BlockToHastBuilder class', () => {
           rich_text: [getMockRichTextItem('test1')]
         }),
         nest: [],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -462,8 +503,10 @@ describe('BlockToHastBuilder class', () => {
           rich_text: [getMockRichTextItem('test1')]
         }),
         nest: [],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -489,8 +532,10 @@ describe('BlockToHastBuilder class', () => {
           rich_text: [getMockRichTextItem('test1')]
         }),
         nest: [],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -511,8 +556,10 @@ describe('BlockToHastBuilder class', () => {
           caption: []
         }),
         nest: [],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -532,8 +579,10 @@ describe('BlockToHastBuilder class', () => {
           caption: [getMockRichTextItem('caption1')]
         }),
         nest: [],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -552,8 +601,10 @@ describe('BlockToHastBuilder class', () => {
           rich_text: [getMockRichTextItem('test1')]
         }),
         nest: [],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -585,8 +636,10 @@ describe('BlockToHastBuilder class', () => {
           caption: [getMockRichTextItem('caption1')]
         }),
         nest: [],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -618,8 +671,10 @@ describe('BlockToHastBuilder class', () => {
           caption: []
         }),
         nest: [],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -653,8 +708,10 @@ describe('BlockToHastBuilder class', () => {
           rich_text: [getMockRichTextItem('test1')]
         }),
         nest: [],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -678,8 +735,10 @@ describe('BlockToHastBuilder class', () => {
           rich_text: [getMockRichTextItem('test1')]
         }),
         nest: [],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -703,8 +762,10 @@ describe('BlockToHastBuilder class', () => {
           rich_text: [getMockRichTextItem('test1')]
         }),
         nest: [],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -723,8 +784,10 @@ describe('BlockToHastBuilder class', () => {
           rich_text: [getMockRichTextItem('test1')]
         }),
         nest: [],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -757,8 +820,10 @@ describe('BlockToHastBuilder class', () => {
           rich_text: [getMockRichTextItem('test1')]
         }),
         nest: [],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -783,8 +848,10 @@ describe('BlockToHastBuilder class', () => {
           rich_text: [getMockRichTextItem('test1')]
         }),
         nest: [],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -808,8 +875,10 @@ describe('BlockToHastBuilder class', () => {
       await b.build({
         block: getMockBlock('divider', {}),
         nest: [],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -819,8 +888,10 @@ describe('BlockToHastBuilder class', () => {
       await b.build({
         block: getMockBlock('other', {}),
         nest: [],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -845,8 +916,10 @@ describe('BlockToHastBuilder class', () => {
       await b.build({
         block: getMockBlock('divider', {}),
         nest: [],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -863,8 +936,10 @@ describe('BlockToHastBuilder class', () => {
       await b.build({
         block: getMockBlock('column_list', {}),
         nest: ['col1', 'col2'],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -874,8 +949,10 @@ describe('BlockToHastBuilder class', () => {
       await b.build({
         block: getMockBlock('other', {}),
         nest: ['col1', 'col2'],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -898,8 +975,10 @@ describe('BlockToHastBuilder class', () => {
       await b.build({
         block: getMockBlock('column_list', {}),
         nest: ['col1', 'col2'],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -916,8 +995,10 @@ describe('BlockToHastBuilder class', () => {
       await b.build({
         block: getMockBlock('column', {}),
         nest: ['test1'],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -927,8 +1008,10 @@ describe('BlockToHastBuilder class', () => {
       await b.build({
         block: getMockBlock('other', {}),
         nest: ['test1'],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -951,8 +1034,10 @@ describe('BlockToHastBuilder class', () => {
       await b.build({
         block: getMockBlock('column', {}),
         nest: ['test1'],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -972,8 +1057,10 @@ describe('BlockToHastBuilder class', () => {
           rich_text: [getMockRichTextItem('test1')]
         }),
         nest: [],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -986,8 +1073,10 @@ describe('BlockToHastBuilder class', () => {
           rich_text: [getMockRichTextItem('test1')]
         }),
         nest: [],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -999,8 +1088,10 @@ describe('BlockToHastBuilder class', () => {
           rich_text: [getMockRichTextItem('test1')]
         }),
         nest: [],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -1032,8 +1123,10 @@ describe('BlockToHastBuilder class', () => {
           rich_text: [getMockRichTextItem('test1')]
         }),
         nest: [],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -1053,8 +1146,10 @@ describe('BlockToHastBuilder class', () => {
           rich_text: [getMockRichTextItem('test1')]
         }),
         nest: [],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -1067,8 +1162,10 @@ describe('BlockToHastBuilder class', () => {
           rich_text: [getMockRichTextItem('test1')]
         }),
         nest: [],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -1080,8 +1177,10 @@ describe('BlockToHastBuilder class', () => {
           rich_text: [getMockRichTextItem('test1')]
         }),
         nest: [],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -1113,8 +1212,10 @@ describe('BlockToHastBuilder class', () => {
           rich_text: [getMockRichTextItem('test1')]
         }),
         nest: [],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -1134,8 +1235,10 @@ describe('BlockToHastBuilder class', () => {
           rich_text: [getMockRichTextItem('test1')]
         }),
         nest: [],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -1148,8 +1251,10 @@ describe('BlockToHastBuilder class', () => {
           rich_text: [getMockRichTextItem('test1')]
         }),
         nest: [],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -1161,8 +1266,10 @@ describe('BlockToHastBuilder class', () => {
           rich_text: [getMockRichTextItem('test1')]
         }),
         nest: [],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -1188,8 +1295,10 @@ describe('BlockToHastBuilder class', () => {
           rich_text: [getMockRichTextItem('test1')]
         }),
         nest: [],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -1216,8 +1325,10 @@ describe('BlockToHastBuilder class', () => {
           rich_text: [getMockRichTextItem('test1')]
         }),
         nest: [],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -1231,8 +1342,10 @@ describe('BlockToHastBuilder class', () => {
           rich_text: [getMockRichTextItem('test1')]
         }),
         nest: [],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -1244,8 +1357,10 @@ describe('BlockToHastBuilder class', () => {
           rich_text: [getMockRichTextItem('test1')]
         }),
         nest: [],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -1277,8 +1392,10 @@ describe('BlockToHastBuilder class', () => {
           rich_text: [getMockRichTextItem('test1')]
         }),
         nest: [],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -1299,8 +1416,10 @@ describe('BlockToHastBuilder class', () => {
           rich_text: [getMockRichTextItem('test1')]
         }),
         nest: [],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -1327,8 +1446,10 @@ describe('BlockToHastBuilder class', () => {
           rich_text: [getMockRichTextItem('test1')]
         }),
         nest: ['details1'],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -1341,8 +1462,10 @@ describe('BlockToHastBuilder class', () => {
           rich_text: [getMockRichTextItem('test1')]
         }),
         nest: ['details1'],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -1361,8 +1484,10 @@ describe('BlockToHastBuilder class', () => {
           rich_text: [getMockRichTextItem('test1')]
         }),
         nest: [],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -1391,8 +1516,10 @@ describe('BlockToHastBuilder class', () => {
           rich_text: [getMockRichTextItem('test1')]
         }),
         nest: ['details1'],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -1418,8 +1545,10 @@ describe('BlockToHastBuilder class', () => {
           rich_text: []
         }),
         nest: ['rows'],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -1431,8 +1560,10 @@ describe('BlockToHastBuilder class', () => {
           rich_text: []
         }),
         nest: ['rows'],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -1457,8 +1588,10 @@ describe('BlockToHastBuilder class', () => {
           rich_text: []
         }),
         nest: ['rows'],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -1480,8 +1613,10 @@ describe('BlockToHastBuilder class', () => {
           ]
         }),
         nest: [],
-        parent: { type: 'table', table: {} } as any,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -1496,13 +1631,25 @@ describe('BlockToHastBuilder class', () => {
           ]
         }),
         nest: [],
-        parent: {
-          type: 'table',
-          table: {
-            has_column_header: true
-          }
-        } as any,
         index: 0,
+        depth: 1,
+        parents: [
+          {
+            type: 'table',
+            table: {
+              has_column_header: true
+            }
+          } as any
+        ],
+        opts: {
+          ...getToHastOpts(),
+          parent: {
+            type: 'table',
+            table: {
+              has_column_header: true
+            }
+          } as any
+        },
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -1517,13 +1664,25 @@ describe('BlockToHastBuilder class', () => {
           ]
         }),
         nest: [],
-        parent: {
-          type: 'table',
-          table: {
-            has_row_header: true
-          }
-        } as any,
         index: 0,
+        depth: 1,
+        parents: [
+          {
+            type: 'table',
+            table: {
+              has_row_header: true
+            }
+          } as any
+        ],
+        opts: {
+          ...getToHastOpts(),
+          parent: {
+            type: 'table',
+            table: {
+              has_row_header: true
+            }
+          } as any
+        },
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -1538,8 +1697,10 @@ describe('BlockToHastBuilder class', () => {
           ]
         }),
         nest: [],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -1574,8 +1735,21 @@ describe('BlockToHastBuilder class', () => {
           ]
         }),
         nest: [],
-        parent: { type: 'table', table: {} } as any,
         index: 0,
+        depth: 1,
+        parents: [
+          {
+            type: 'table',
+            table: {}
+          } as any
+        ],
+        opts: {
+          ...getToHastOpts(),
+          parent: {
+            type: 'table',
+            table: {}
+          } as any
+        },
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -1595,13 +1769,25 @@ describe('BlockToHastBuilder class', () => {
           ]
         }),
         nest: [],
-        parent: {
-          type: 'table',
-          table: {
-            has_column_header: true
-          }
-        } as any,
         index: 0,
+        depth: 1,
+        parents: [
+          {
+            type: 'table',
+            table: {
+              has_column_header: true
+            }
+          } as any
+        ],
+        opts: {
+          ...getToHastOpts(),
+          parent: {
+            type: 'table',
+            table: {
+              has_column_header: true
+            }
+          } as any
+        },
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -1621,13 +1807,25 @@ describe('BlockToHastBuilder class', () => {
           ]
         }),
         nest: [],
-        parent: {
-          type: 'table',
-          table: {
-            has_row_header: true
-          }
-        } as any,
         index: 0,
+        depth: 1,
+        parents: [
+          {
+            type: 'table',
+            table: {
+              has_row_header: true
+            }
+          } as any
+        ],
+        opts: {
+          ...getToHastOpts(),
+          parent: {
+            type: 'table',
+            table: {
+              has_row_header: true
+            }
+          } as any
+        },
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -1647,13 +1845,25 @@ describe('BlockToHastBuilder class', () => {
           ]
         }),
         nest: [],
-        parent: {
-          type: 'table',
-          table: {
-            has_row_header: true
-          }
-        } as any,
         index: 1,
+        depth: 1,
+        parents: [
+          {
+            type: 'table',
+            table: {
+              has_row_header: true
+            }
+          } as any
+        ],
+        opts: {
+          ...getToHastOpts(),
+          parent: {
+            type: 'table',
+            table: {
+              has_row_header: true
+            }
+          } as any
+        },
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -1686,13 +1896,25 @@ describe('BlockToHastBuilder class', () => {
           ]
         }),
         nest: [],
-        parent: {
-          type: 'table',
-          table: {
-            has_column_header: true
-          }
-        } as any,
         index: 0,
+        depth: 1,
+        parents: [
+          {
+            type: 'table',
+            table: {
+              has_column_header: true
+            }
+          } as any
+        ],
+        opts: {
+          ...getToHastOpts(),
+          parent: {
+            type: 'table',
+            table: {
+              has_column_header: true
+            }
+          } as any
+        },
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -1712,13 +1934,25 @@ describe('BlockToHastBuilder class', () => {
           ]
         }),
         nest: [],
-        parent: {
-          type: 'table',
-          table: {
-            has_row_header: true
-          }
-        } as any,
         index: 0,
+        depth: 1,
+        parents: [
+          {
+            type: 'table',
+            table: {
+              has_row_header: true
+            }
+          } as any
+        ],
+        opts: {
+          ...getToHastOpts(),
+          parent: {
+            type: 'table',
+            table: {
+              has_row_header: true
+            }
+          } as any
+        },
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -1738,13 +1972,25 @@ describe('BlockToHastBuilder class', () => {
           ]
         }),
         nest: [],
-        parent: {
-          type: 'table',
-          table: {
-            has_row_header: true
-          }
-        } as any,
         index: 1,
+        depth: 1,
+        parents: [
+          {
+            type: 'table',
+            table: {
+              has_row_header: true
+            }
+          } as any
+        ],
+        opts: {
+          ...getToHastOpts(),
+          parent: {
+            type: 'table',
+            table: {
+              has_row_header: true
+            }
+          } as any
+        },
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -1769,8 +2015,10 @@ describe('BlockToHastBuilder class', () => {
           caption: []
         }),
         nest: [],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -1783,8 +2031,10 @@ describe('BlockToHastBuilder class', () => {
           caption: [getMockRichTextItem('test1')]
         }),
         nest: [],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -1803,8 +2053,10 @@ describe('BlockToHastBuilder class', () => {
           rich_text: [getMockRichTextItem('test1')]
         }),
         nest: [],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -1834,8 +2086,10 @@ describe('BlockToHastBuilder class', () => {
           caption: [getMockRichTextItem('test1')]
         }),
         nest: [],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -1865,8 +2119,10 @@ describe('BlockToHastBuilder class', () => {
           caption: [getMockRichTextItem('test1')]
         }),
         nest: [],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -1889,8 +2145,10 @@ describe('BlockToHastBuilder class', () => {
           caption: [getMockRichTextItem('test1')]
         }),
         nest: [],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -1913,8 +2171,10 @@ describe('BlockToHastBuilder class', () => {
           caption: []
         }),
         nest: [],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -1926,8 +2186,10 @@ describe('BlockToHastBuilder class', () => {
           rich_text: [getMockRichTextItem('test1')]
         }),
         nest: [],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -1960,8 +2222,10 @@ describe('BlockToHastBuilder class', () => {
           caption: [getMockRichTextItem('test1')]
         }),
         nest: [],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -1988,8 +2252,10 @@ describe('BlockToHastBuilder class(defaultClassName)', () => {
           rich_text: [getMockRichTextItem('test1')]
         }),
         nest: [],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -2012,8 +2278,10 @@ describe('BlockToHastBuilder class(defaultClassName)', () => {
           rich_text: [getMockRichTextItem('test1')]
         }),
         nest: [],
-        parent: undefined,
         index: 0,
+        depth: 0,
+        parents: [],
+        opts: getToHastOpts(),
         richTextToHast: new RichTextToHast(),
         colorProps: new ColorProps({})
       }),
@@ -2033,8 +2301,10 @@ describe('SurroundElement class', () => {
         rich_text: [getMockRichTextItem('test1')]
       }),
       nest: [],
-      parent: undefined,
       index: 0,
+      depth: 0,
+      parents: [],
+      opts: getToHastOpts(),
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
@@ -2047,8 +2317,10 @@ describe('SurroundElement class', () => {
         rich_text: [getMockRichTextItem('test1')]
       }),
       nest: [],
-      parent: undefined,
       index: 0,
+      depth: 0,
+      parents: [],
+      opts: getToHastOpts(),
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
@@ -2061,8 +2333,10 @@ describe('SurroundElement class', () => {
         rich_text: [getMockRichTextItem('test1')]
       }),
       nest: [],
-      parent: undefined,
       index: 0,
+      depth: 0,
+      parents: [],
+      opts: getToHastOpts(),
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
@@ -2075,8 +2349,10 @@ describe('SurroundElement class', () => {
         rich_text: [getMockRichTextItem('test1')]
       }),
       nest: [],
-      parent: undefined,
       index: 0,
+      depth: 0,
+      parents: [],
+      opts: getToHastOpts(),
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
@@ -2089,8 +2365,10 @@ describe('SurroundElement class', () => {
         rich_text: [getMockRichTextItem('test1')]
       }),
       nest: [],
-      parent: undefined,
       index: 0,
+      depth: 0,
+      parents: [],
+      opts: getToHastOpts(),
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
@@ -2104,8 +2382,10 @@ describe('SurroundElement class', () => {
         caption: []
       }),
       nest: [],
-      parent: undefined,
       index: 0,
+      depth: 0,
+      parents: [],
+      opts: getToHastOpts(),
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
@@ -2128,8 +2408,10 @@ describe('SurroundElement class', () => {
         rich_text: [getMockRichTextItem('test1')]
       }),
       nest: [],
-      parent: undefined,
       index: 0,
+      depth: 0,
+      parents: [],
+      opts: getToHastOpts(),
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
@@ -2146,8 +2428,10 @@ describe('SurroundElement class', () => {
     await surround.append({
       block: getMockBlock('divider', {}),
       nest: [],
-      parent: undefined,
       index: 0,
+      depth: 0,
+      parents: [],
+      opts: getToHastOpts(),
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
@@ -2157,8 +2441,10 @@ describe('SurroundElement class', () => {
     await surround.append({
       block: getMockBlock('column_list', {}),
       nest: ['col1', 'col2'],
-      parent: undefined,
       index: 0,
+      depth: 0,
+      parents: [],
+      opts: getToHastOpts(),
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
@@ -2170,8 +2456,10 @@ describe('SurroundElement class', () => {
     await surround.append({
       block: getMockBlock('column', {}),
       nest: ['test1'],
-      parent: undefined,
       index: 0,
+      depth: 0,
+      parents: [],
+      opts: getToHastOpts(),
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
@@ -2183,8 +2471,10 @@ describe('SurroundElement class', () => {
         rich_text: [getMockRichTextItem('test1')]
       }),
       nest: [],
-      parent: undefined,
       index: 0,
+      depth: 0,
+      parents: [],
+      opts: getToHastOpts(),
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
@@ -2196,8 +2486,10 @@ describe('SurroundElement class', () => {
         rich_text: [getMockRichTextItem('test1')]
       }),
       nest: [],
-      parent: undefined,
       index: 0,
+      depth: 0,
+      parents: [],
+      opts: getToHastOpts(),
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
@@ -2209,8 +2501,10 @@ describe('SurroundElement class', () => {
         rich_text: [getMockRichTextItem('test1')]
       }),
       nest: [],
-      parent: undefined,
       index: 0,
+      depth: 0,
+      parents: [],
+      opts: getToHastOpts(),
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
@@ -2226,8 +2520,10 @@ describe('SurroundElement class', () => {
         rich_text: [getMockRichTextItem('test1')]
       }),
       nest: [],
-      parent: undefined,
       index: 0,
+      depth: 0,
+      parents: [],
+      opts: getToHastOpts(),
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
@@ -2242,8 +2538,10 @@ describe('SurroundElement class', () => {
         rich_text: [getMockRichTextItem('test1')]
       }),
       nest: ['details1'],
-      parent: undefined,
       index: 0,
+      depth: 0,
+      parents: [],
+      opts: getToHastOpts(),
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
@@ -2257,8 +2555,10 @@ describe('SurroundElement class', () => {
         rich_text: []
       }),
       nest: ['rows'],
-      parent: undefined,
       index: 0,
+      depth: 0,
+      parents: [],
+      opts: getToHastOpts(),
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
@@ -2270,8 +2570,21 @@ describe('SurroundElement class', () => {
         cells: [[getMockRichTextItem('test1')], [getMockRichTextItem('test2')]]
       }),
       nest: [],
-      parent: { type: 'table', table: {} } as any,
       index: 0,
+      depth: 1,
+      parents: [
+        {
+          type: 'table',
+          table: {}
+        } as any
+      ],
+      opts: {
+        ...getToHastOpts(),
+        parent: {
+          type: 'table',
+          table: {}
+        } as any
+      },
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
@@ -2287,8 +2600,10 @@ describe('SurroundElement class', () => {
         caption: [getMockRichTextItem('test1')]
       }),
       nest: [],
-      parent: undefined,
       index: 0,
+      depth: 0,
+      parents: [],
+      opts: getToHastOpts(),
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
@@ -2314,8 +2629,10 @@ describe('SurroundElement class', () => {
     await surround.append({
       block: getMockBlock('paragraph'),
       nest: [],
-      parent: undefined,
       index: 0,
+      depth: 0,
+      parents: [],
+      opts: getToHastOpts(),
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
@@ -2323,8 +2640,10 @@ describe('SurroundElement class', () => {
     await surround.append({
       block: getMockBlock('heading_1'),
       nest: [],
-      parent: undefined,
       index: 0,
+      depth: 0,
+      parents: [],
+      opts: getToHastOpts(),
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
@@ -2332,8 +2651,10 @@ describe('SurroundElement class', () => {
     await surround.append({
       block: getMockBlock('heading_2'),
       nest: [],
-      parent: undefined,
       index: 0,
+      depth: 0,
+      parents: [],
+      opts: getToHastOpts(),
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
@@ -2341,8 +2662,10 @@ describe('SurroundElement class', () => {
     await surround.append({
       block: getMockBlock('heading_3'),
       nest: [],
-      parent: undefined,
       index: 0,
+      depth: 0,
+      parents: [],
+      opts: getToHastOpts(),
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
@@ -2350,8 +2673,10 @@ describe('SurroundElement class', () => {
     await surround.append({
       block: getMockBlock('heading_4'),
       nest: [],
-      parent: undefined,
       index: 0,
+      depth: 0,
+      parents: [],
+      opts: getToHastOpts(),
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
@@ -2362,8 +2687,10 @@ describe('SurroundElement class', () => {
         caption: []
       }),
       nest: [],
-      parent: undefined,
       index: 0,
+      depth: 0,
+      parents: [],
+      opts: getToHastOpts(),
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
@@ -2378,8 +2705,10 @@ describe('SurroundElement class', () => {
         rich_text: [getMockRichTextItem('test1')]
       }),
       nest: [],
-      parent: undefined,
       index: 0,
+      depth: 0,
+      parents: [],
+      opts: getToHastOpts(),
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
@@ -2387,8 +2716,10 @@ describe('SurroundElement class', () => {
     await surround.append({
       block: getMockBlock('divider'),
       nest: [],
-      parent: undefined,
       index: 0,
+      depth: 0,
+      parents: [],
+      opts: getToHastOpts(),
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
@@ -2397,8 +2728,10 @@ describe('SurroundElement class', () => {
     await surround.append({
       block: getMockBlock('column_list', {}),
       nest: ['col1', 'col2'],
-      parent: undefined,
       index: 0,
+      depth: 0,
+      parents: [],
+      opts: getToHastOpts(),
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
@@ -2407,8 +2740,10 @@ describe('SurroundElement class', () => {
     await surround.append({
       block: getMockBlock('column', {}),
       nest: ['test1'],
-      parent: undefined,
       index: 0,
+      depth: 0,
+      parents: [],
+      opts: getToHastOpts(),
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
@@ -2416,8 +2751,10 @@ describe('SurroundElement class', () => {
     await surround.append({
       block: getMockBlock('bulleted_list_item'),
       nest: [],
-      parent: undefined,
       index: 0,
+      depth: 0,
+      parents: [],
+      opts: getToHastOpts(),
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
@@ -2425,8 +2762,10 @@ describe('SurroundElement class', () => {
     await surround.append({
       block: getMockBlock('numbered_list_item'),
       nest: [],
-      parent: undefined,
       index: 0,
+      depth: 0,
+      parents: [],
+      opts: getToHastOpts(),
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
@@ -2434,8 +2773,10 @@ describe('SurroundElement class', () => {
     await surround.append({
       block: getMockBlock('table'),
       nest: [],
-      parent: undefined,
       index: 0,
+      depth: 0,
+      parents: [],
+      opts: getToHastOpts(),
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
@@ -2445,8 +2786,10 @@ describe('SurroundElement class', () => {
         rich_text: [getMockRichTextItem('test1')]
       }),
       nest: [],
-      parent: undefined,
       index: 0,
+      depth: 0,
+      parents: [],
+      opts: getToHastOpts(),
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
@@ -2458,8 +2801,10 @@ describe('SurroundElement class', () => {
         rich_text: [getMockRichTextItem('test1')]
       }),
       nest: [],
-      parent: undefined,
       index: 0,
+      depth: 0,
+      parents: [],
+      opts: getToHastOpts(),
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
@@ -2471,8 +2816,10 @@ describe('SurroundElement class', () => {
         rich_text: [getMockRichTextItem('test1')]
       }),
       nest: ['details1'],
-      parent: undefined,
       index: 0,
+      depth: 0,
+      parents: [],
+      opts: getToHastOpts(),
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
@@ -2480,8 +2827,10 @@ describe('SurroundElement class', () => {
     await surround.append({
       block: getMockBlock('table_row', { cells: [] }),
       nest: [],
-      parent: undefined,
       index: 0,
+      depth: 0,
+      parents: [],
+      opts: getToHastOpts(),
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
@@ -2492,8 +2841,10 @@ describe('SurroundElement class', () => {
         caption: [getMockRichTextItem('test1')]
       }),
       nest: [],
-      parent: undefined,
       index: 0,
+      depth: 0,
+      parents: [],
+      opts: getToHastOpts(),
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
@@ -2505,8 +2856,10 @@ describe('SurroundElement class', () => {
         caption: []
       }),
       nest: [],
-      parent: undefined,
       index: 0,
+      depth: 0,
+      parents: [],
+      opts: getToHastOpts(),
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
@@ -2514,8 +2867,10 @@ describe('SurroundElement class', () => {
     await surround.append({
       block: getMockBlock('unsuported', { cells: [] }),
       nest: [],
-      parent: undefined,
       index: 0,
+      depth: 0,
+      parents: [],
+      opts: getToHastOpts(),
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
@@ -2536,8 +2891,10 @@ describe('SurroundElement class', () => {
     await surround.append({
       block: getMockBlock('paragraph'),
       nest: [],
-      parent: undefined,
       index: 0,
+      depth: 0,
+      parents: [],
+      opts: getToHastOpts(),
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
@@ -2547,8 +2904,10 @@ describe('SurroundElement class', () => {
     await surround.append({
       block: getMockBlock('bulleted_list_item'),
       nest: [],
-      parent: undefined,
       index: 0,
+      depth: 0,
+      parents: [],
+      opts: getToHastOpts(),
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
@@ -2558,8 +2917,10 @@ describe('SurroundElement class', () => {
     await surround.append({
       block: getMockBlock('bulleted_list_item'),
       nest: [],
-      parent: undefined,
       index: 0,
+      depth: 0,
+      parents: [],
+      opts: getToHastOpts(),
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
@@ -2569,8 +2930,10 @@ describe('SurroundElement class', () => {
     await surround.append({
       block: getMockBlock('numbered_list_item'),
       nest: [],
-      parent: undefined,
       index: 0,
+      depth: 0,
+      parents: [],
+      opts: getToHastOpts(),
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
@@ -2580,8 +2943,10 @@ describe('SurroundElement class', () => {
     await surround.append({
       block: getMockBlock('numbered_list_item'),
       nest: [],
-      parent: undefined,
       index: 0,
+      depth: 0,
+      parents: [],
+      opts: getToHastOpts(),
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
@@ -2593,8 +2958,10 @@ describe('SurroundElement class', () => {
         rich_text: [getMockRichTextItem('test1')]
       }),
       nest: [],
-      parent: undefined,
       index: 0,
+      depth: 0,
+      parents: [],
+      opts: getToHastOpts(),
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
@@ -2608,8 +2975,10 @@ describe('SurroundElement class', () => {
         rich_text: [getMockRichTextItem('test1')]
       }),
       nest: [],
-      parent: undefined,
       index: 0,
+      depth: 0,
+      parents: [],
+      opts: getToHastOpts(),
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
@@ -2623,8 +2992,10 @@ describe('SurroundElement class', () => {
         rich_text: [getMockRichTextItem('test1')]
       }),
       nest: ['details1'],
-      parent: undefined,
       index: 0,
+      depth: 0,
+      parents: [],
+      opts: getToHastOpts(),
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
@@ -2634,8 +3005,10 @@ describe('SurroundElement class', () => {
     await surround.append({
       block: getMockBlock('column_list', {}),
       nest: ['col1', 'col2'],
-      parent: undefined,
       index: 0,
+      depth: 0,
+      parents: [],
+      opts: getToHastOpts(),
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
@@ -2645,8 +3018,10 @@ describe('SurroundElement class', () => {
     await surround.append({
       block: getMockBlock('column', {}),
       nest: ['test1'],
-      parent: undefined,
       index: 0,
+      depth: 0,
+      parents: [],
+      opts: getToHastOpts(),
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
@@ -2656,8 +3031,10 @@ describe('SurroundElement class', () => {
     await surround.append({
       block: getMockBlock('table'),
       nest: [],
-      parent: undefined,
       index: 0,
+      depth: 0,
+      parents: [],
+      opts: getToHastOpts(),
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
@@ -2669,8 +3046,10 @@ describe('SurroundElement class', () => {
         cells: [[], [getMockRichTextItem('test2')]]
       }),
       nest: [],
-      parent: undefined,
       index: 0,
+      depth: 0,
+      parents: [],
+      opts: getToHastOpts(),
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
@@ -2683,8 +3062,10 @@ describe('SurroundElement class', () => {
         caption: [getMockRichTextItem('test1')]
       }),
       nest: [],
-      parent: undefined,
       index: 0,
+      depth: 0,
+      parents: [],
+      opts: getToHastOpts(),
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
@@ -2698,8 +3079,10 @@ describe('SurroundElement class', () => {
         caption: []
       }),
       nest: [],
-      parent: undefined,
       index: 0,
+      depth: 0,
+      parents: [],
+      opts: getToHastOpts(),
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
@@ -2709,8 +3092,10 @@ describe('SurroundElement class', () => {
     await surround.append({
       block: getMockBlock('other'),
       nest: [],
-      parent: undefined,
       index: 0,
+      depth: 0,
+      parents: [],
+      opts: getToHastOpts(),
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
@@ -2727,8 +3112,10 @@ describe('SurroundElement class', () => {
     await surround.append({
       block: getMockBlock('bulleted_list_item'),
       nest: [],
-      parent: undefined,
       index: 0,
+      depth: 0,
+      parents: [],
+      opts: getToHastOpts(),
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })
@@ -2738,8 +3125,10 @@ describe('SurroundElement class', () => {
     await surround.append({
       block: getMockBlock('numbered_list_item'),
       nest: [],
-      parent: undefined,
       index: 0,
+      depth: 0,
+      parents: [],
+      opts: getToHastOpts(),
       richTextToHast: new RichTextToHast(),
       colorProps: new ColorProps({})
     })

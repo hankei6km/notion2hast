@@ -1,6 +1,8 @@
 import { Client, type RichTextItemResponse } from '@notionhq/client'
 import type { Child, Properties } from 'hastscript'
 import { BlockToHastBuilder } from './block.ts'
+import type { ColorProps } from './color.ts'
+import type { RichTextToHast } from './richtext.ts'
 
 export type ToHastOpts = {
   block_id: string
@@ -91,6 +93,16 @@ export type BlockToHastOpts = {
 export type ColorPropertiesMap = Record<string, Properties>
 export type ColorPropsOpts = {
   colorPropertiesMap?: ColorPropertiesMap
+}
+export type BlockToHastBuilderBuildOpts = {
+  block: Block
+  nest: Child[]
+  index: number
+  depth: number
+  parents: Block[]
+  opts: ToHastOpts
+  richTextToHast: RichTextToHast
+  colorProps: ColorProps
 }
 export type RichTexttoHastBuildePropertiesMap = Record<string, Properties>
 export type RichTexttoHastBuilderOpts = {

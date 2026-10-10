@@ -53,8 +53,10 @@ export async function blockToHast(
       await surround.append({
         block: i,
         nest,
-        parent: opts.parent,
         index,
+        depth,
+        parents,
+        opts,
         richTextToHast,
         colorProps
       })
