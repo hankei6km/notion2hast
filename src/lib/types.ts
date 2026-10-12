@@ -1,4 +1,8 @@
-import { Client, type RichTextItemResponse } from '@notionhq/client'
+import {
+  Client,
+  type GetBlockResponse,
+  type RichTextItemResponse
+} from '@notionhq/client'
 import type { Child, Properties } from 'hastscript'
 import { BlockToHastBuilder } from './block.ts'
 import type { ColorProps } from './color.ts'
@@ -12,11 +16,7 @@ export type ToHastOpts = {
   colorPropsOpts?: ColorPropsOpts
 }
 
-// https://github.com/makenotion/notion-sdk-js/issues/280#issuecomment-1086821269
-export type Block = Extract<
-  Awaited<ReturnType<InstanceType<typeof Client>['blocks']['retrieve']>>,
-  { type: string }
->
+export type Block = Extract<GetBlockResponse, { type: string }>
 
 export type BlockToHastBuilderPropertiesKey =
   | `paragraph`
@@ -77,10 +77,14 @@ export type BlockToHastBuilderOpts = {
   defaultClassname?: boolean
   propertiesMap?: BlockToHastBuilderPropertiesMap
 }
-export type BlockToHastBuilders = Record<
-  string,
-  BlockToHastBuilder<Block['type']>
->
+//export type BlockToHastBuilders = Partial<
+//  Record<Block['type'], BlockToHastBuilder<Block['type']>>
+//>
+export type BlockToHastBuilders = {
+  // 'paragraph': BlockToHastBuilder<'paragraph'> // ok
+  // 'paragraph': BlockToHastBuilder<'heading_1'> // error
+  [key in Block['type']]?: BlockToHastBuilder<key>
+}
 
 export type RichTextItem = RichTextItemResponse
 

@@ -75,7 +75,7 @@ export class BlockItem {
   }
 }
 
-export abstract class BlockToHastBuilder<T> {
+export abstract class BlockToHastBuilder<T extends Block['type']> {
   protected blockType!: T
   protected defaultClassname: boolean
   protected propertiesMap: BlockToHastBuilderPropertiesMap = {}
