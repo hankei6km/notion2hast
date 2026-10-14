@@ -16,7 +16,16 @@
     "hast"
   ],
   "main": "dist/index.js",
-  "exports": "./dist/index.js",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./buider": {
+      "types": "./dist/builder/index.d.ts",
+      "import": "./dist/builder/index.js"
+    }
+  },
   "type": "module",
   "types": "dist/index.d.ts",
   "files": [

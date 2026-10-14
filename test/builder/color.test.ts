@@ -1,6 +1,6 @@
 import { describe, it } from 'node:test'
 import assert from 'node:assert/strict'
-import { ColorProps } from '../../src/lib/color.ts'
+import { ColorProps } from '../../src/builder/color.ts'
 
 describe('ColorProps.props()', () => {
   it('should retun text class', () => {

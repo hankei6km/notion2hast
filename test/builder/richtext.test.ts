@@ -3,9 +3,9 @@ import assert from 'node:assert/strict'
 
 import { h } from 'hastscript'
 import { getMockRichTextItem } from '../util.ts'
-import { colorText, RichTextToHast } from '../../src/lib/richtext.ts'
-import { ColorProps } from '../../src/lib/color.ts'
-import type { BlockToHastBuilderBuildOpts } from '../../src/lib/types.ts'
+import { colorText, RichTextToHast } from '../../src/builder/richtext.ts'
+import { ColorProps } from '../../src/builder/color.ts'
+import type { BlockToHastBuilderBuildOpts } from '../../src/builder/types.ts'
 
 describe('colorText()', () => {
   it('should retun color', () => {

@@ -1,10 +1,11 @@
 import { h } from 'hastscript'
 import type { Child } from 'hastscript'
-import { CyclicChainError, type Block, type ToHastOpts } from './types.ts'
+import { type Block, type ToHastOpts } from '../builder/types.ts'
+import { CyclicChainError } from '../lib/types.ts'
 import { Client } from './client.ts'
-import { BlockItem, SurroundElement } from './block.ts'
-import { RichTextToHast } from './richtext.ts'
-import { ColorProps } from './color.ts'
+import { SurroundElement, BlockItem } from '../lib/surround.ts'
+import { RichTextToHast } from '../builder/richtext.ts'
+import { ColorProps } from '../builder/color.ts'
 
 export async function blockToHast(
   client: Client,
@@ -12,20 +13,23 @@ export async function blockToHast(
   depth: number = 0,
   parents: Block[] = []
 ): Promise<Child> {
-  const colorProps = new ColorProps({
-    ...opts.colorPropsOpts
-  })
-  const richTextToHast = new RichTextToHast(
-    opts.richTexttoHastOpts || {},
-    colorProps
-  )
+  const colorProps =
+    opts.customBuilders?.colorProps ||
+    new ColorProps({
+      ...opts.colorPropsOpts
+    })
+  const richTextToHast =
+    opts.customBuilders?.richText ||
+    new RichTextToHast(opts.richTexttoHastOpts || {}, colorProps)
   const children: Child = []
   //const ite = blockItem(client, opts)
   const ite = new BlockItem(client, opts)
   await ite.init()
   let index = 0
   let i = await ite.block()
-  const surround = new SurroundElement('', opts.blocktoHastOpts || {})
+  const blockToHastOpts = Object.assign({}, opts.blocktoHastOpts || {})
+  blockToHastOpts.blockToHastBuilders = opts.customBuilders?.block
+  const surround = new SurroundElement('', blockToHastOpts)
   while (i !== null) {
     while (i !== null && !surround.isBreak(i.type)) {
       const nest: Child = []

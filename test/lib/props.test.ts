@@ -1,6 +1,6 @@
 import { describe, it } from 'node:test'
 import assert from 'node:assert/strict'
-import { mergeProps } from '../../src/lib/props.ts'
+import { mergeProps } from '../../src/builder/props.ts'
 
 describe('mergeProps()', () => {
   it('should merge properties', () => {
