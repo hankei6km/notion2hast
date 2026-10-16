@@ -5,7 +5,6 @@ import { mergeProps } from './props.ts'
 import type {
   RichTextItem,
   RichTexttoHastOpts,
-  ColorPropertiesMap,
   RichTexttoHastBuildePropertiesMap,
   ToHastOpts,
   Block,
@@ -50,7 +49,7 @@ export class RichTextToHast {
     }
     return ret
   }
-  protected textToHast(text: RichTextItem): Child {
+  protected textToHast(text: Extract<RichTextItem, { type: 'text' }>): Child {
     let tag: { name: string; properties: Properties }[] = []
     const value = text.plain_text
     if (text.href) {
@@ -105,11 +104,15 @@ export class RichTextToHast {
     }
     return nest
   }
-  protected equationToHast(text: RichTextItem): Child {
+  protected equationToHast(
+    text: Extract<RichTextItem, { type: 'equation' }>
+  ): Child {
     // とりあえず空を返す
     return ''
   }
-  protected mentionToHast(text: RichTextItem): Child {
+  protected mentionToHast(
+    text: Extract<RichTextItem, { type: 'mention' }>
+  ): Child {
     // とりあえず空を返す
     return ''
   }

@@ -227,6 +227,49 @@ const client = new FromNotion({
 </div>
 ```
 
+### Custom Builder
+
+Block、Rich Text および Color の変換処理をカスタマイズするためのビルダーを指定できる。
+
+```typescript
+class CustomRichTextToHast extends RichTextToHast {
+  equationToHast(text: Extract<RichTextItem, { type: 'equation' }>): Child {
+    return {
+      type: 'text',
+      value: `$${text.equation.expression}$`
+    }
+  }
+}
+class CustomBlockEquationToHast extends BlockToHastBuilder<'equation'> {
+  constructor(opts: BlockToHastBuilderOpts = {}) {
+    super('equation', opts)
+  }
+  outerTag() {
+    return { name: null }
+  }
+  async build(opts: BlockToHastBuilderBuildOpts): Promise<Child[]> {
+    if (this.blockType === opts.block.type) {
+      return [
+        h('p', '$$'),
+        h('p', opts.block.equation.expression),
+        h('p', '$$')
+      ]
+    }
+    return []
+  }
+  isBreak(_prevType: PrevType): boolean {
+    return true
+  }
+}
+const tree = await blockToHast(client, {
+  block_id,
+  customBuilders: {
+    block: { equation: new CustomBlockEquationToHast() },
+    richText: new CustomRichTextToHast()
+  }
+})
+```
+
 ## 対応状況
 
 ### Block

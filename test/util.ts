@@ -1,5 +1,5 @@
-import { RichTextToHast } from '../src/lib/richtext.ts'
-import type { RichTextItem } from '../src/lib/types.ts'
+import { RichTextToHast } from '../src/builder/richtext.ts'
+import type { RichTextItem } from '../src/builder/types.ts'
 
 export function getMockRichTextItem(
   text: string,
