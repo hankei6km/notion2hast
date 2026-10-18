@@ -247,15 +247,14 @@ class CustomBlockEquationToHast extends BlockToHastBuilder<'equation'> {
   outerTag() {
     return { name: null }
   }
-  async build(opts: BlockToHastBuilderBuildOpts): Promise<Child[]> {
-    if (this.blockType === opts.block.type) {
-      return [
-        h('p', '$$'),
-        h('p', opts.block.equation.expression),
-        h('p', '$$')
-      ]
-    }
-    return []
+  async build(
+    opts: BlockToHastBuilderBuildOpts & { block: { type: 'equation' } }
+  ): Promise<Child[]> {
+    return [
+      h('p', '$$'),
+      h('p', opts.block.equation.expression),
+      h('p', '$$')
+    ]
   }
   isBreak(_prevType: PrevType): boolean {
     return true

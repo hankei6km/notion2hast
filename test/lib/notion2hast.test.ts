@@ -164,17 +164,16 @@ describe('Custom Builder', () => {
   it('paragraph をカスタムビルダーで処理する', async () => {
     const client = new MockClient()
     class CustomBlockParagraphToHast extends BlockParagraphToHast {
-      async build(opts: BlockToHastBuilderBuildOpts): Promise<Child[]> {
-        if (this.blockType === opts.block.type) {
-          const result = await super.build(opts)
-          ;(result[0] as any).type === 'element' &&
-            (result[0] as any).children.push({
-              type: 'comment',
-              value: 'custom'
-            })
-          return result
-        }
-        return []
+      async build(
+        opts: BlockToHastBuilderBuildOpts & { block: { type: 'paragraph' } }
+      ): Promise<Child[]> {
+        const result = await super.build(opts)
+        ;(result[0] as any).type === 'element' &&
+          (result[0] as any).children.push({
+            type: 'comment',
+            value: 'custom'
+          })
+        return result
       }
     }
     assert.deepStrictEqual(
@@ -230,17 +229,16 @@ describe('Custom Builder', () => {
       }
     }
     class CustomBlockParagraphToHast extends BlockParagraphToHast {
-      async build(opts: BlockToHastBuilderBuildOpts): Promise<Child[]> {
-        if (this.blockType === opts.block.type) {
-          const result = await super.build(opts)
-          ;(result[0] as any).type === 'element' &&
-            (result[0] as any).children.push({
-              type: 'comment',
-              value: 'custom'
-            })
-          return result
-        }
-        return []
+      async build(
+        opts: BlockToHastBuilderBuildOpts & { block: { type: 'paragraph' } }
+      ): Promise<Child[]> {
+        const result = await super.build(opts)
+        ;(result[0] as any).type === 'element' &&
+          (result[0] as any).children.push({
+            type: 'comment',
+            value: 'custom'
+          })
+        return result
       }
     }
     assert.deepStrictEqual(
@@ -295,15 +293,14 @@ describe('Custom Builder', () => {
       outerTag() {
         return { name: null }
       }
-      async build(opts: BlockToHastBuilderBuildOpts): Promise<Child[]> {
-        if (this.blockType === opts.block.type) {
-          return [
-            h('p', '$$'),
-            h('p', opts.block.equation.expression),
-            h('p', '$$')
-          ]
-        }
-        return []
+      async build(
+        opts: BlockToHastBuilderBuildOpts & { block: { type: 'equation' } }
+      ): Promise<Child[]> {
+        return [
+          h('p', '$$'),
+          h('p', opts.block.equation.expression),
+          h('p', '$$')
+        ]
       }
       isBreak(_prevType: PrevType): boolean {
         return true
@@ -359,7 +356,9 @@ describe('Custom Builder', () => {
       outerTag() {
         return { name: null }
       }
-      async build(opts: BlockToHastBuilderBuildOpts): Promise<Child[]> {
+      async build(
+        opts: BlockToHastBuilderBuildOpts & { block: { type: 'equation' } }
+      ): Promise<Child[]> {
         return []
       }
       isBreak(_prevType: PrevType): boolean {

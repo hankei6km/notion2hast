@@ -82,21 +82,6 @@ describe('BlockToHastBuilder class', () => {
       }),
       [h('p', { style: 'color:#9B9A97' }, ...['test1'])]
     )
-    assert.deepStrictEqual(
-      await b.build({
-        block: getMockBlock('otherother', {
-          rich_text: [getMockRichTextItem('test1')]
-        }),
-        nest: [],
-        index: 0,
-        depth: 0,
-        parents: [],
-        opts: getToHastOpts(),
-        richTextToHast: new RichTextToHast(),
-        colorProps: new ColorProps({})
-      }),
-      []
-    )
 
     assert.strictEqual(b.isBreak(''), true)
     assert.strictEqual(b.isBreak('paragraph'), true)
@@ -164,21 +149,6 @@ describe('BlockToHastBuilder class', () => {
         colorProps: new ColorProps({})
       }),
       [h('h1', { style: 'color:#9B9A97' }, ...['test1'])]
-    )
-    assert.deepStrictEqual(
-      await b.build({
-        block: getMockBlock('other', {
-          rich_text: [getMockRichTextItem('test1')]
-        }),
-        nest: [],
-        index: 0,
-        depth: 0,
-        parents: [],
-        opts: getToHastOpts(),
-        richTextToHast: new RichTextToHast(),
-        colorProps: new ColorProps({})
-      }),
-      []
     )
 
     assert.strictEqual(b.isBreak(''), true)
@@ -248,21 +218,6 @@ describe('BlockToHastBuilder class', () => {
       }),
       [h('h2', { style: 'color:#9B9A97' }, ...['test1'])]
     )
-    assert.deepStrictEqual(
-      await b.build({
-        block: getMockBlock('other', {
-          rich_text: [getMockRichTextItem('test1')]
-        }),
-        nest: [],
-        index: 0,
-        depth: 0,
-        parents: [],
-        opts: getToHastOpts(),
-        richTextToHast: new RichTextToHast(),
-        colorProps: new ColorProps({})
-      }),
-      []
-    )
 
     assert.strictEqual(b.isBreak(''), true)
     assert.strictEqual(b.isBreak('heading_2'), true)
@@ -331,21 +286,6 @@ describe('BlockToHastBuilder class', () => {
       }),
       [h('h3', { style: 'color:#9B9A97' }, ...['test1'])]
     )
-    assert.deepStrictEqual(
-      await b.build({
-        block: getMockBlock('other', {
-          rich_text: [getMockRichTextItem('test1')]
-        }),
-        nest: [],
-        index: 0,
-        depth: 0,
-        parents: [],
-        opts: getToHastOpts(),
-        richTextToHast: new RichTextToHast(),
-        colorProps: new ColorProps({})
-      }),
-      []
-    )
 
     assert.strictEqual(b.isBreak(''), true)
     assert.strictEqual(b.isBreak('heading_3'), true)
@@ -413,21 +353,6 @@ describe('BlockToHastBuilder class', () => {
         colorProps: new ColorProps({})
       }),
       [h('h4', { style: 'color:#9B9A97' }, ...['test1'])]
-    )
-    assert.deepStrictEqual(
-      await b.build({
-        block: getMockBlock('other', {
-          rich_text: [getMockRichTextItem('test1')]
-        }),
-        nest: [],
-        index: 0,
-        depth: 0,
-        parents: [],
-        opts: getToHastOpts(),
-        richTextToHast: new RichTextToHast(),
-        colorProps: new ColorProps({})
-      }),
-      []
     )
 
     assert.strictEqual(b.isBreak(''), true)
@@ -511,21 +436,6 @@ describe('BlockToHastBuilder class', () => {
           h('figcaption', {}, ['caption1'])
         )
       ]
-    )
-    assert.deepStrictEqual(
-      await b.build({
-        block: getMockBlock('other', {
-          rich_text: [getMockRichTextItem('test1')]
-        }),
-        nest: [],
-        index: 0,
-        depth: 0,
-        parents: [],
-        opts: getToHastOpts(),
-        richTextToHast: new RichTextToHast(),
-        colorProps: new ColorProps({})
-      }),
-      []
     )
 
     assert.strictEqual(b.isBreak(''), true)
@@ -695,21 +605,6 @@ describe('BlockToHastBuilder class', () => {
         )
       ]
     )
-    assert.deepStrictEqual(
-      await b.build({
-        block: getMockBlock('otherother', {
-          rich_text: [getMockRichTextItem('test1')]
-        }),
-        nest: [],
-        index: 0,
-        depth: 0,
-        parents: [],
-        opts: getToHastOpts(),
-        richTextToHast: new RichTextToHast(),
-        colorProps: new ColorProps({})
-      }),
-      []
-    )
 
     assert.strictEqual(b.isBreak(''), true)
     assert.strictEqual(b.isBreak('callout'), true)
@@ -801,19 +696,6 @@ describe('BlockToHastBuilder class', () => {
       }),
       [h('hr')]
     )
-    assert.deepStrictEqual(
-      await b.build({
-        block: getMockBlock('other', {}),
-        nest: [],
-        index: 0,
-        depth: 0,
-        parents: [],
-        opts: getToHastOpts(),
-        richTextToHast: new RichTextToHast(),
-        colorProps: new ColorProps({})
-      }),
-      []
-    )
 
     assert.strictEqual(b.isBreak(''), true)
     assert.strictEqual(b.isBreak('divider'), true)
@@ -862,19 +744,6 @@ describe('BlockToHastBuilder class', () => {
       }),
       [h('div', {}, ...['col1', 'col2'])]
     )
-    assert.deepStrictEqual(
-      await b.build({
-        block: getMockBlock('other', {}),
-        nest: ['col1', 'col2'],
-        index: 0,
-        depth: 0,
-        parents: [],
-        opts: getToHastOpts(),
-        richTextToHast: new RichTextToHast(),
-        colorProps: new ColorProps({})
-      }),
-      []
-    )
 
     assert.strictEqual(b.isBreak(''), true)
     assert.strictEqual(b.isBreak('column_list'), true)
@@ -920,19 +789,6 @@ describe('BlockToHastBuilder class', () => {
         colorProps: new ColorProps({})
       }),
       [h('div', {}, ...['test1'])]
-    )
-    assert.deepStrictEqual(
-      await b.build({
-        block: getMockBlock('other', {}),
-        nest: ['test1'],
-        index: 0,
-        depth: 0,
-        parents: [],
-        opts: getToHastOpts(),
-        richTextToHast: new RichTextToHast(),
-        colorProps: new ColorProps({})
-      }),
-      []
     )
 
     assert.strictEqual(b.isBreak(''), true)
@@ -998,21 +854,6 @@ describe('BlockToHastBuilder class', () => {
         colorProps: new ColorProps({})
       }),
       [h('li', { style: 'color:#9B9A97' }, ...['test1'])]
-    )
-    assert.deepStrictEqual(
-      await b.build({
-        block: getMockBlock('other', {
-          rich_text: [getMockRichTextItem('test1')]
-        }),
-        nest: [],
-        index: 0,
-        depth: 0,
-        parents: [],
-        opts: getToHastOpts(),
-        richTextToHast: new RichTextToHast(),
-        colorProps: new ColorProps({})
-      }),
-      []
     )
 
     assert.strictEqual(b.isBreak(''), true)
@@ -1088,21 +929,6 @@ describe('BlockToHastBuilder class', () => {
       }),
       [h('li', { style: 'color:#9B9A97' }, ...['test1'])]
     )
-    assert.deepStrictEqual(
-      await b.build({
-        block: getMockBlock('other', {
-          rich_text: [getMockRichTextItem('test1')]
-        }),
-        nest: [],
-        index: 0,
-        depth: 0,
-        parents: [],
-        opts: getToHastOpts(),
-        richTextToHast: new RichTextToHast(),
-        colorProps: new ColorProps({})
-      }),
-      []
-    )
 
     assert.strictEqual(b.isBreak(''), true)
     assert.strictEqual(b.isBreak('numbered_list_item'), false)
@@ -1176,21 +1002,6 @@ describe('BlockToHastBuilder class', () => {
         colorProps: new ColorProps({})
       }),
       [h('blockquote', { style: 'color:#9B9A97' }, ...['test1'])]
-    )
-    assert.deepStrictEqual(
-      await b.build({
-        block: getMockBlock('otherother', {
-          rich_text: [getMockRichTextItem('test1')]
-        }),
-        nest: [],
-        index: 0,
-        depth: 0,
-        parents: [],
-        opts: getToHastOpts(),
-        richTextToHast: new RichTextToHast(),
-        colorProps: new ColorProps({})
-      }),
-      []
     )
 
     assert.strictEqual(b.isBreak(''), true)
@@ -1267,21 +1078,6 @@ describe('BlockToHastBuilder class', () => {
         colorProps: new ColorProps({})
       }),
       [h('div', {}, h('div', {}), h('div', {}, ...['test1']))]
-    )
-    assert.deepStrictEqual(
-      await b.build({
-        block: getMockBlock('otherother', {
-          rich_text: [getMockRichTextItem('test1')]
-        }),
-        nest: [],
-        index: 0,
-        depth: 0,
-        parents: [],
-        opts: getToHastOpts(),
-        richTextToHast: new RichTextToHast(),
-        colorProps: new ColorProps({})
-      }),
-      []
     )
 
     assert.strictEqual(b.isBreak(''), true)
@@ -1395,21 +1191,6 @@ describe('BlockToHastBuilder class', () => {
         )
       ]
     )
-    assert.deepStrictEqual(
-      await b.build({
-        block: getMockBlock('otherother', {
-          rich_text: [getMockRichTextItem('test1')]
-        }),
-        nest: [],
-        index: 0,
-        depth: 0,
-        parents: [],
-        opts: getToHastOpts(),
-        richTextToHast: new RichTextToHast(),
-        colorProps: new ColorProps({})
-      }),
-      []
-    )
 
     assert.strictEqual(b.isBreak(''), true)
     assert.strictEqual(b.isBreak('paragraph'), true)
@@ -1470,21 +1251,6 @@ describe('BlockToHastBuilder class', () => {
         colorProps: new ColorProps({})
       }),
       [h('table', {}, ...['rows'])]
-    )
-    assert.deepStrictEqual(
-      await b.build({
-        block: getMockBlock('other', {
-          rich_text: []
-        }),
-        nest: ['rows'],
-        index: 0,
-        depth: 0,
-        parents: [],
-        opts: getToHastOpts(),
-        richTextToHast: new RichTextToHast(),
-        colorProps: new ColorProps({})
-      }),
-      []
     )
 
     assert.strictEqual(b.isBreak(''), true)
@@ -1604,24 +1370,6 @@ describe('BlockToHastBuilder class', () => {
         colorProps: new ColorProps({})
       }),
       [h('tr', [h('th', {}, ...['test1']), h('td', {}, ...['test2'])])]
-    )
-    assert.deepStrictEqual(
-      await b.build({
-        block: getMockBlock('other', {
-          cells: [
-            [getMockRichTextItem('test1')],
-            [getMockRichTextItem('test2')]
-          ]
-        }),
-        nest: [],
-        index: 0,
-        depth: 0,
-        parents: [],
-        opts: getToHastOpts(),
-        richTextToHast: new RichTextToHast(),
-        colorProps: new ColorProps({})
-      }),
-      []
     )
 
     assert.strictEqual(b.isBreak(''), true)
@@ -1964,21 +1712,6 @@ describe('BlockToHastBuilder class', () => {
         )
       ]
     )
-    assert.deepStrictEqual(
-      await b.build({
-        block: getMockBlock('otherother', {
-          rich_text: [getMockRichTextItem('test1')]
-        }),
-        nest: [],
-        index: 0,
-        depth: 0,
-        parents: [],
-        opts: getToHastOpts(),
-        richTextToHast: new RichTextToHast(),
-        colorProps: new ColorProps({})
-      }),
-      []
-    )
 
     assert.strictEqual(b.isBreak(''), true)
     assert.strictEqual(b.isBreak('paragraph'), true)
@@ -2096,21 +1829,6 @@ describe('BlockToHastBuilder class', () => {
         colorProps: new ColorProps({})
       }),
       [h('figure', {}, h('img', { src: 'test-url' }))]
-    )
-    assert.deepStrictEqual(
-      await b.build({
-        block: getMockBlock('other', {
-          rich_text: [getMockRichTextItem('test1')]
-        }),
-        nest: [],
-        index: 0,
-        depth: 0,
-        parents: [],
-        opts: getToHastOpts(),
-        richTextToHast: new RichTextToHast(),
-        colorProps: new ColorProps({})
-      }),
-      []
     )
 
     assert.strictEqual(b.isBreak(''), true)
